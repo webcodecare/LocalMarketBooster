@@ -1,0 +1,212 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(147, 100%, 21%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* Saudi Arabia themed colors */
+  --saudi-green: hsl(147, 100%, 21%);
+  --saudi-gold: hsl(51, 100%, 50%);
+  --success-green: hsl(122, 39%, 49%);
+  --urgency-red: hsl(354, 70%, 54%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(147, 100%, 21%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --primary: hsl(147, 100%, 21%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply antialiased bg-background text-foreground;
+    font-family: 'Cairo', 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    direction: rtl;
+    text-align: right;
+    line-height: 1.6;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  }
+  
+  * {
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+  }
+  
+  html {
+    direction: rtl;
+    scroll-behavior: smooth;
+  }
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: 640px) {
+  .container {
+    @apply px-3;
+  }
+  
+  .grid {
+    @apply gap-3;
+  }
+  
+  .card {
+    @apply p-3;
+  }
+  
+  h1, h2, h3, h4 {
+    @apply break-words;
+  }
+  
+  button {
+    min-height: 44px;
+  }
+  
+  .table-container {
+    @apply overflow-x-auto;
+  }
+}
+
+/* Ensure header stays sticky on all devices */
+header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 50 !important;
+}
+
+/* Back button styles */
+.back-button {
+  @apply flex items-center text-gray-600 hover:text-saudi-green font-medium px-3 py-2 rounded-lg hover:bg-green-50 transition-all duration-200;
+}
+
+/* Saudi Arabia Theme Custom Classes */
+.bg-saudi-green {
+  background-color: hsl(147, 100%, 21%);
+}
+
+.bg-saudi-gold {
+  background-color: hsl(51, 100%, 50%);
+}
+
+.text-saudi-green {
+  color: hsl(147, 100%, 21%);
+}
+
+.text-saudi-gold {
+  color: hsl(51, 100%, 50%);
+}
+
+.border-saudi-green {
+  border-color: hsl(147, 100%, 21%);
+}
+
+.hover\:bg-saudi-green:hover {
+  background-color: hsl(147, 100%, 21%);
+}
+
+.hover\:text-saudi-green:hover {
+  color: hsl(147, 100%, 21%);
+}
+
+/* Custom button styles for Saudi theme */
+.btn-saudi {
+  @apply bg-saudi-green text-white hover:bg-green-800 transition-colors duration-200 font-medium rounded-lg px-6 py-3;
+}
+
+/* Arabic text improvements */
+.arabic-text {
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  direction: rtl;
+  text-align: right;
+}
+
+/* Responsive improvements for mobile */
+@media (max-width: 768px) {
+  .mobile-responsive {
+    @apply text-sm px-2 py-1;
+  }
+  
+  .mobile-grid {
+    @apply grid-cols-1 gap-2;
+  }
+  
+  .mobile-text {
+    @apply text-xs;
+  }
+}
+
+/* Loading states */
+.loading-spinner {
+  @apply animate-spin rounded-full border-2 border-gray-300;
+  border-top-color: hsl(147, 100%, 21%);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600;
+}

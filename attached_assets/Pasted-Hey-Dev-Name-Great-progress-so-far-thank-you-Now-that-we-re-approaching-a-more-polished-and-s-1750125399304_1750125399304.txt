@@ -1,0 +1,58 @@
+Hey [Dev Name],
+
+Great progress so far — thank you! Now that we’re approaching a more polished and scalable version of the admin dashboard, we need to improve the subscription system significantly to make it production-ready.
+
+Below are the required enhancements for the **Subscription Plan Feature Management** module:
+
+---
+
+## ✅ Objective:
+Transform the subscription system into a **fully dynamic, feature-based plan manager**, where each plan (Free / Basic / Premium / etc.) can have a custom set of features controlled from the admin dashboard.
+
+---
+
+## 📦 Admin Capabilities Required:
+
+1. Create and manage multiple subscription plans (add/edit/delete).
+2. Create and manage features (add/edit/delete).
+3. For each plan, toggle each feature as:
+   - ✅ Included
+   - ❌ Not included
+4. Display a clear **comparison matrix/table** of plans and features (like SaaS platforms such as Notion, Trello, etc.).
+5. All plan data and features must be stored in the database, not hardcoded.
+
+---
+
+## 🧠 Feature List (Seed Suggestions to Implement Now):
+
+Please start by implementing the following features as default options in the system:
+
+| Feature                             | Description |
+|-------------------------------------|-------------|
+| AI Offer Analyzer                   | Analyzes offers using AI for improvements |
+| Auto Repost System                  | Automatically reposts offers to keep them fresh |
+| Advanced Offer Analytics            | See views, clicks, and engagement |
+| Offer Highlighting                  | Visually highlight offers in listings |
+| Early Access to New Features        | Access beta features before others |
+| Priority Support                    | Fast-track technical support |
+| Campaign Scheduler                  | Schedule offers for specific dates |
+| Multi-Branch Access                 | Allow access to manage multiple branches |
+| Verified Business Badge             | Special badge next to merchant name |
+| Custom Offer Themes                 | Allow merchants to apply custom design styles |
+| Manual Offer Approval Bypass       | Publish offers instantly without admin review |
+
+Feel free to adjust names or icons as needed — but these features must be dynamically manageable.
+
+---
+
+## 🧩 Additional Notes:
+
+- The merchant interface should display this table in a clean, responsive format so merchants can easily compare what they get per plan.
+- You can use checkmarks (✅) and crosses (❌), or a toggle system to show inclusion.
+- Consider modularity — this system may expand later with enterprise-level features.
+
+---
+
+Let me know once this structure is in place or if you'd like me to provide an API schema / DB design suggestion to help with implementation.
+
+Thanks again!

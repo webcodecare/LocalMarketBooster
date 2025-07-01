@@ -1,0 +1,87 @@
+📩 Prompt for Phase 2 – Booking Flow & Content Upload
+
+Hi,
+
+Let’s move forward with Phase 2 of the Screen Ads system:
+📦 Booking Flow + Content Upload + Price Calculation
+
+Here’s the breakdown:
+
+⸻
+
+✅ 1. Booking Modal (After selecting location on the map)
+
+When a merchant clicks “Book Ad Here”:
+	•	Open a form/modal with:
+	•	Start Date
+	•	End Date
+	•	Upload Ad (Image: JPG/PNG, or Video: MP4 – max 20MB)
+	•	Auto-calculate duration in days
+	•	Auto-calculate total price:
+    duration × screen daily rate (from DB) × number of screens
+
+    Show a summary preview:
+	•	Place name
+	•	Ad type (Image or Video)
+	•	Duration
+	•	Total price (in SAR)
+	•	Button: “Submit for Review”
+
+⸻
+
+✅ 2. Admin Side (Approval Flow)
+
+In the admin dashboard, allow:
+	•	View submitted bookings with:
+	•	Merchant info
+	•	Uploaded media
+	•	Location, duration, price
+	•	Approve / Reject
+	•	(Optional) Schedule the play dates/times
+
+⸻
+
+✅ 3. Database (screen_ads table)
+
+Make sure booking is saved with:
+	•	merchant_id
+	•	location_id
+	•	media_url
+	•	start_date, end_date
+	•	status (pending / approved / rejected)
+	•	price
+
+Please also implement the Admin Location Management Panel for screen ads.
+
+⸻
+
+✅ Admin: Screen Location Management
+
+In the admin dashboard, add a tab or section to manage screen locations.
+
+Admin can:
+	•	Add a new screen location manually:
+	•	Location Name (e.g. Granada Mall – Main Entrance)
+	•	City (e.g. Riyadh, Jeddah)
+	•	Neighborhood or Area
+	•	Google Maps link (auto extract coordinates if possible)
+	•	Latitude / Longitude
+	•	Working Hours (e.g. 9 AM – 12 AM)
+	•	Number of Screens
+	•	Price per screen per day (SAR)
+	•	Screen Type (TV / LED / Tablet)
+	•	Special Notes (e.g. “High foot traffic”, “Next to entrance”, etc.)
+	•	Edit / Delete existing screen locations
+	•	Preview how the location will appear on the merchant side (as a marker with info)
+
+⸻
+
+✅ Optional Enhancements:
+	•	Allow admin to upload a photo of the location (visible to merchants)
+	•	Add a toggle: Is Available? → To hide/show inactive screens
+
+⸻
+
+💡 Objective:
+
+This gives full control to you (admin) to manage screen locations, while showing merchants professional, clear, and detailed info to help them choose the best ad spot.

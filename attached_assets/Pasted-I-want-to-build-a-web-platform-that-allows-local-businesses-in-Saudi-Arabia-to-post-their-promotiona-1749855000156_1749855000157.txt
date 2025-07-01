@@ -1,0 +1,69 @@
+I want to build a web platform that allows local businesses in Saudi Arabia to post their promotional offers and discounts. The platform will be organized into multiple categories such as Restaurants, Travel & Tourism, Cafes, Clinics, Online Stores, and more.
+
+The concept is to allow companies to register on the platform, create their own business profile, and post offers such as limited-time discounts, coupon codes, or seasonal deals. Visitors can browse all the offers easily without logging in.
+
+👥 User Roles:
+
+1. Visitor (User):
+   - Can browse offers by category or location.
+   - No login required.
+
+2. Business (Advertiser):
+   - Can register and create a business account.
+   - Can add/edit/delete their own offers.
+   - Each offer includes: title, image(s), description, link (e.g., WhatsApp, website, or online store), start and end date, and optional discount code.
+   - Can view their active/inactive offers via a dashboard.
+
+3. Admin:
+   - Full access to manage users, companies, and offers.
+   - Can approve, delete, or suspend any offer.
+   - Manage categories and content.
+
+📦 Main Offer Categories:
+- Restaurants 🍽️
+- Travel & Tourism ✈️
+- Cafes ☕
+- Clinics & Beauty 💆‍♀️
+- Online Shops 🛍️
+- Courses & Education 🧠
+- “Today’s Deals” 🔥 (Offers expiring in less than 24 hours)
+
+🔑 Key Features:
+- Business registration and login
+- Business dashboard to post and manage offers
+- Homepage shows featured and trending offers
+- Browse by category, city, or expiration date
+- Internal search engine
+- “Featured Offer” option (highlighted on top)
+- Share buttons for WhatsApp, Snapchat, Instagram
+- Countdown timer for each offer (time left before expiration)
+- Fully responsive design for mobile/tablet
+- Persistent “Post Your Offer” button in the top navigation
+
+🚀 Optional Future Features:
+- Each business gets a profile page showing all its active/past offers
+- Coupons managed and tracked through the platform
+- View counts or basic offer analytics
+- Monthly subscription model for businesses
+- Featured slots or banner ad space available
+
+🛠️ Suggested Stack:
+- Frontend: Next.js + Tailwind CSS
+- Backend: Node.js or Laravel (choose based on best speed of development)
+- Database: PostgreSQL or MongoDB
+- Admin Panel: Simple and intuitive interface
+- Email confirmation and welcome email for new business accounts
+
+📄 Core Pages:
+- Home page (with featured + latest offers)
+- Offer details page
+- Category browsing page
+- Business login / registration page
+- Business dashboard
+- Admin dashboard
+- “Post Offer” page
+
+🎯 Goal:
+To create the #1 centralized platform for finding and promoting real-time business offers in Saudi Arabia, starting digital-first with future potential for real-world integration.
+
+Please start by building a clean, scalable MVP with core functionality, then we can expand the project in phases.

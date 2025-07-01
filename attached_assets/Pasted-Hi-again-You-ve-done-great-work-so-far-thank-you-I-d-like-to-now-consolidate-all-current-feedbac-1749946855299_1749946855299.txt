@@ -1,0 +1,89 @@
+Hi again! You've done great work so far — thank you. I'd like to now consolidate all current feedback into a single, complete enhancement request that covers both UX/UI improvements and additional platform functionality.
+
+---
+
+🔹 SECTION 1: UI/UX IMPROVEMENTS
+
+1. **Header Consistency:**
+   - Ensure the main header (logo, navigation, "Add Your Offer" button) is consistently visible across all pages, including login/register pages.
+   - Remove duplicate logos or buttons appearing multiple times.
+
+2. **Add "Back" Button:**
+   - On internal pages (like /auth), add a clear "Back" or "Return to Home" button for better navigation flow.
+
+3. **Search Bar Styling:**
+   - Move it below the header.
+   - Improve spacing, padding, and visual style (rounded input + search icon/button).
+
+4. **Category Section:**
+   - Style each category as a clean card with icons.
+   - Add equal padding, centered text, and consistent layout.
+
+5. **RTL Support (Arabic Layout):**
+   - All layouts should follow RTL structure:
+     - Right-aligned labels, inputs, and headings.
+     - Navigation should start from the right.
+
+6. **Typography:**
+   - Use a modern Arabic font like “Tajawal” or “Cairo”.
+   - Maintain consistent spacing and visual hierarchy.
+
+7. **Section Separation:**
+   - Visually separate homepage sections like “Categories”, “Today’s Offers”, and “Latest Offers” using dividers, background shades, or spacing.
+
+8. **Login/Register Page:**
+   - Improve tab styling for "Login" and "Create Account".
+   - Add header or breadcrumb.
+   - Improve input field spacing and alignment.
+
+---
+
+🔹 SECTION 2: FUNCTIONALITY UPGRADES
+
+1. **Favorite/Save Offer Feature (❤️):**
+   - Add a heart/save button to each offer.
+   - When clicked, prompt a small form to collect:
+     - Full Name
+     - Phone Number
+     - City
+
+2. **OTP Integration (Future Phase):**
+   - For now, store submitted info without verification.
+   - But structure the system to allow future OTP verification via Unifonic or similar provider.
+
+3. **Public Business Profile Page:**
+   - Each business should have a public page showing:
+     - Logo
+     - Description
+     - Social media links (full URLs)
+     - Active offers
+     - Branches (locations)
+
+4. **Branch Management:**
+   - Businesses should be able to add multiple branches with:
+     - Name, city, address, phone (optional), Google Maps link (optional)
+
+5. **Offer Targeting by Branches or Cities:**
+   - Allow businesses to choose one or more branches/cities when creating an offer (checkbox style).
+   - Optionally: “All branches” or “All of Saudi Arabia”
+
+6. **Featured Offers:**
+   - Businesses can mark an offer as featured.
+   - Display featured offers at the top with a distinct style.
+
+7. **View Counter:**
+   - Show number of views per offer.
+   - Display in the business dashboard, and optionally on the public card.
+
+8. **Share Buttons:**
+   - Add sharing options on each offer (WhatsApp, Copy link, etc.)
+
+9. **Contact Business:**
+   - Add “Contact Business” button on offers.
+   - Redirects to WhatsApp or opens a basic contact form.
+
+---
+
+Let me know once these updates are implemented or if you'd like me to prepare mockups or wireframes to support the changes.
+
+Thanks again for all your efforts — the platform is shaping up really well!

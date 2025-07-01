@@ -1,0 +1,90 @@
+Hi,
+
+We’re ready to begin the implementation of a new feature in Laqathaa platform:
+📺 Screen Ads Booking System — for merchants to display ads in physical screens located inside cafés, restaurants, and malls.
+
+Please follow the full breakdown below and start Phase 1:
+
+⸻
+
+✅ Phase 1: Screen Locations & Map Interface
+	1.	Database Structure
+Create a new table: screen_locations with:
+
+	•	id
+	•	name (e.g. Café Boulevard)
+	•	latitude
+	•	longitude
+	•	address (city, area, street)
+	•	working_hours
+	•	screen_count
+	•	is_active
+
+Optional: Add a column for screen type (TV / Tablet / LED Wall)
+	2.	Admin Interface to Manage Locations
+
+	•	Add/Edit/Delete screen locations via dashboard
+
+	3.	User Map Interface
+
+	•	On the merchant dashboard, add a new tab: “Advertise on Screens”
+	•	Show a Google Map with markers for all available locations
+	•	On marker click: show popup with:
+	•	Place name
+	•	Number of screens
+	•	Working hours
+	•	Button: “Book Ad Here”
+
+	4.	Google Maps Integration
+Use Google Maps API to display all locations on the map with real-time zoom and marker interaction.
+
+⸻
+
+✅ Phase 2: Booking Flow & Content Upload
+	1.	Booking Page After Click
+
+	•	Merchant selects:
+	•	Start date
+	•	Duration (e.g. 3 days, 1 week)
+	•	Uploads image or video (MP4, JPG, PNG)
+	•	System calculates total cost:
+	•	(duration in days × fixed daily rate per screen)
+	•	Example: 3 days × 2 screens × 50 SAR = 300 SAR
+
+	2.	Confirmation Page
+
+	•	Show booking summary
+	•	Button: “Submit for Review”
+
+	3.	Admin Approval Flow
+
+	•	In admin panel, you see:
+	•	Uploaded content
+	•	Location booked
+	•	Merchant info
+	•	Option to approve/reject + schedule display time manually or automatically
+
+⸻
+
+✅ Phase 3: Display & Schedule Logic (Basic MVP)
+	1.	Basic Schedule Table (screen_ads)
+
+	•	id, merchant_id, location_id, media_url, start_date, end_date, status
+
+	2.	Manual Playback (MVP)
+
+	•	Each screen can access approved media via a public endpoint or downloadable link (e.g. Google Drive, Firebase Storage)
+
+	3.	Future Enhancements (Not now)
+
+	•	Dynamic playlist generation
+	•	Raspberry Pi / Android app for automatic screen playback
+	•	Performance analytics: # of displays, estimated views
+
+⸻
+
+Let me know when Phase 1 (Map + Locations) is complete so I can review and approve.
+
+We’ll build this as a fully integrated feature inside the Laqathaa ecosystem, with full control from the admin side (no accounts for the restaurants).
+
+Thanks!

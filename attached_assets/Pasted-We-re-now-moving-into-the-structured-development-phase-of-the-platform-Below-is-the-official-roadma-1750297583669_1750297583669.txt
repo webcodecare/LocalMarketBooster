@@ -1,0 +1,77 @@
+We’re now moving into the structured development phase of the platform. Below is the official roadmap you should follow step by step. Each item includes clear requirements, expected behavior, and a notification to send me when done.
+
+Please read everything carefully. This is not just a task list – it’s the full product structure.
+
+⸻
+
+🟩 Phase 1 – Core UX Foundation
+
+✅ 1. Subscription System – Already completed.
+✅ 2. AI Offer Analyzer – Already completed.
+
+🟡 3. Login UX Enhancement
+	•	After login, replace the “Login” button with the user’s name or business name.
+	•	On click: show a dropdown with:
+	•	Dashboard
+	•	Logout
+	•	Redirect based on role:
+	•	Merchant → Merchant dashboard
+	•	Admin → Admin panel
+	•	User → User account area
+
+🟡 4. Mobile Responsiveness Fix
+	•	Fix horizontal overflow in tables, buttons, and feature lists
+	•	Wrap tables and wide content with overflow-x: auto
+	•	Apply media queries for small screen sizes
+	•	Test on real mobile screens
+
+✅ Send after completion:
+“✅ Login UX and mobile responsiveness are complete.”
+
+⸻
+
+🟨 Phase 2 – Plan-Based Feature Control
+
+🔜 5. Restrict Feature Access by Plan
+	•	Check the merchant’s active plan and restrict access to features accordingly
+	•	If a feature is not included in the plan:
+	•	Show lock icon 🔒
+	•	Display a message: “Upgrade to access this feature”
+
+🔜 6. Show Locked Features
+	•	On the merchant dashboard, show all features (including locked ones in grey)
+	•	Add a small description under each locked feature
+
+✅ Send after completion:
+“✅ Feature access now matches merchant subscription plan.”
+
+⸻
+
+🟦 Phase 3 – Admin Tools
+
+🔜 7. AI Analysis History Page
+	•	In the admin panel, show a table of all offer analyses:
+	•	Offer title, merchant name, scores, date
+	•	Button to re-analyze
+
+🔜 8. Admin Performance Dashboard
+	•	Show global metrics:
+	•	Total merchants
+	•	Active offers
+	•	Most-used categories
+	•	User activity
+
+🔜 9. (Optional) Support Ticket System
+	•	User can submit tickets
+	•	Admin can view, reply, and close them
+
+✅ Send after completion:
+“✅ Admin insights and reporting tools completed.”
+
+⸻
+
+Please send me a short confirmation after each item is completed so I can review before moving forward.
+
+Let’s make this platform production-ready step by step.
+
+Thanks!
