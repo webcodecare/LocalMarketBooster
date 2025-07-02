@@ -743,7 +743,8 @@ export default function SubscriptionManagement() {
             </CardContent>
           </Card>
         </TabsContent>
-        </Tabs>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

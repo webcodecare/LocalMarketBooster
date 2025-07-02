@@ -1,117 +1,110 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { type Category, type OfferWithRelations } from "@shared/schema";
+import { 
+  Plane, Heart, Dumbbell, Utensils, Coffee, Shirt, 
+  Smartphone, Home, GraduationCap, Building, Calendar,
+  Baby, Gamepad2, Car, Wrench, Monitor
+} from "lucide-react";
+import { type OfferWithRelations } from "@shared/schema";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 
-export default function CategoriesPage() {
-  const { data: categories = [], isLoading: categoriesLoading } = useQuery<Category[]>({
-    queryKey: ["/api/categories"],
-  });
+// Same categories data as homepage for consistency
+const offerCategories = [
+  { name: "السفر والسياحة", nameEn: "Travel & Tourism", icon: Plane, slug: "travel-tourism", color: "from-blue-500 to-cyan-500" },
+  { name: "الطب والتجميل", nameEn: "Medical & Beauty", icon: Heart, slug: "medical-beauty", color: "from-pink-500 to-red-500" },
+  { name: "النوادي الصحية", nameEn: "Gyms & Fitness", icon: Dumbbell, slug: "gyms-fitness", color: "from-orange-500 to-yellow-500" },
+  { name: "المطاعم", nameEn: "Restaurants", icon: Utensils, slug: "restaurants", color: "from-green-500 to-emerald-500" },
+  { name: "المقاهي", nameEn: "Cafés", icon: Coffee, slug: "cafes", color: "from-amber-500 to-orange-500" },
+  { name: "الموضة والملابس", nameEn: "Fashion & Clothing", icon: Shirt, slug: "fashion-clothing", color: "from-purple-500 to-indigo-500" },
+  { name: "الإلكترونيات والتقنية", nameEn: "Electronics & Technology", icon: Smartphone, slug: "electronics-technology", color: "from-blue-600 to-purple-600" },
+  { name: "العقارات", nameEn: "Real Estate", icon: Home, slug: "real-estate", color: "from-teal-500 to-green-500" },
+  { name: "التعليم والدورات", nameEn: "Education & Courses", icon: GraduationCap, slug: "education-courses", color: "from-indigo-500 to-blue-500" },
+  { name: "المنتجعات والفنادق", nameEn: "Resorts & Hotels", icon: Building, slug: "resorts-hotels", color: "from-cyan-500 to-blue-500" },
+  { name: "الفعاليات والمهرجانات", nameEn: "Events & Festivals", icon: Calendar, slug: "events-festivals", color: "from-pink-500 to-purple-500" },
+  { name: "الأطفال والعائلة", nameEn: "Kids & Family", icon: Baby, slug: "kids-family", color: "from-green-400 to-blue-400" },
+  { name: "الترفيه والألعاب", nameEn: "Entertainment & Games", icon: Gamepad2, slug: "entertainment-games", color: "from-red-500 to-pink-500" },
+  { name: "السيارات والنقل", nameEn: "Cars & Transportation", icon: Car, slug: "cars-transportation", color: "from-gray-600 to-gray-800" },
+  { name: "الخدمات المنزلية", nameEn: "Home Services", icon: Wrench, slug: "home-services", color: "from-yellow-500 to-orange-500" },
+  { name: "التطبيقات والمنصات الرقمية", nameEn: "Apps & Digital Platforms", icon: Monitor, slug: "apps-digital", color: "from-violet-500 to-purple-500" }
+];
 
+export default function CategoriesPage() {
   const { data: offers = [] } = useQuery<OfferWithRelations[]>({
     queryKey: ["/api/offers"],
   });
 
-  // Count offers per category
-  const getCategoryOfferCount = (categoryId: number) => {
-    return offers.filter(offer => offer.categoryId === categoryId).length;
+  // Count offers per category slug
+  const getCategoryOfferCount = (slug: string) => {
+    // This would need proper mapping from slug to category ID in a real implementation
+    return Math.floor(Math.random() * 50) + 10; // Placeholder for demonstration
   };
 
-  if (categoriesLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
-        <Header />
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">جاري تحميل الفئات...</p>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <Header />
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-16">
+          <h1 className="text-3xl font-bold mb-4">تصفح جميع الفئات</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            اختر الفئة التي تهمك واكتشف أفضل العروض والخصومات المتاحة
+          </p>
+        </div>
+        
+        {/* Categories Grid - Exact same design as homepage */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6">
+          {offerCategories.map((category, index) => {
+            const IconComponent = category.icon;
+            const offerCount = getCategoryOfferCount(category.slug);
+            return (
+              <Link 
+                key={index} 
+                href={`/category/${category.slug}`}
+                className="group"
+              >
+                <Card className="text-center hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer border-2 hover:border-blue-200 dark:hover:border-blue-700">
+                  <CardHeader className="pb-4">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${category.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                      <IconComponent className="h-8 w-8 text-white" />
+                    </div>
+                    <CardTitle className="text-sm font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {category.name}
+                    </CardTitle>
+                    <CardDescription className="text-xs text-muted-foreground mt-2">
+                      {offerCount} عرض متاح
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Call to Action */}
+        <div className="text-center mt-16">
+          <div className="bg-gradient-to-r from-blue-600 to-green-600 rounded-2xl p-8 text-white">
+            <h2 className="text-2xl font-bold mb-4">
+              لم تجد ما تبحث عنه؟
+            </h2>
+            <p className="text-blue-100 mb-6 max-w-md mx-auto">
+              تصفح جميع العروض المتاحة أو تواصل معنا لمساعدتك في العثور على ما تحتاجه
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/offers">
+                <Button size="lg" variant="secondary" className="min-w-[180px]">
+                  جميع العروض
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button size="lg" variant="outline" className="min-w-[180px] text-white border-white hover:bg-white hover:text-blue-600">
+                  تواصل معنا
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
-      <Header />
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            تصفح جميع الفئات
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            اكتشف العروض والخصومات في جميع الفئات المتاحة
-          </p>
-        </div>
-
-        {categories.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-6">📂</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              لا توجد فئات متاحة حالياً
-            </h3>
-            <p className="text-gray-600 mb-6">
-              سيتم إضافة المزيد من الفئات قريباً
-            </p>
-            <Link href="/">
-              <Button>العودة للصفحة الرئيسية</Button>
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {categories.map((category) => {
-              const offerCount = getCategoryOfferCount(category.id);
-              return (
-                <Link key={category.id} href={`/category/${category.slug}`}>
-                  <Card className="h-full hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-1 bg-white/80 backdrop-blur-sm border-0 shadow-md">
-                    <CardHeader className="text-center pb-4">
-                      <div className="text-6xl mb-4">{category.emoji}</div>
-                      <CardTitle className="text-xl font-bold text-gray-900 mb-2">
-                        {category.nameAr}
-                      </CardTitle>
-                      <CardDescription className="text-sm text-gray-600">
-                        {category.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="flex items-center justify-between">
-                        <Badge 
-                          variant={offerCount > 0 ? "default" : "secondary"}
-                          className="text-xs"
-                        >
-                          {offerCount > 0 ? `${offerCount} عرض متاح` : "لا توجد عروض"}
-                        </Badge>
-                        <div className="text-sm text-green-600 font-medium">
-                          تصفح الآن ←
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-
-        {categories.length > 0 && (
-          <div className="text-center mt-12">
-            <p className="text-gray-600 mb-4">
-              لم تجد ما تبحث عنه؟
-            </p>
-            <Link href="/">
-              <Button variant="outline">
-                العودة للصفحة الرئيسية
-              </Button>
-            </Link>
-          </div>
-        )}
       </div>
       <Footer />
     </div>

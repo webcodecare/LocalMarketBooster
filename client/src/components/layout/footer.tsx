@@ -4,7 +4,14 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           <div className="sm:col-span-2 lg:col-span-2">
-            <h3 className="text-xl sm:text-2xl font-bold mb-3 lg:mb-4">لقطها 🇸🇦</h3>
+            <div className="flex items-center mb-3 lg:mb-4">
+              <img 
+                src="/attached_assets/ChatGPT_Image_Jun_25__2025__02_32_00_AM-removebg-preview_1750807971844.png" 
+                alt="براق" 
+                className="h-12 w-12 mr-3 object-contain"
+              />
+              <h3 className="text-xl sm:text-2xl font-bold">براق 🇸🇦</h3>
+            </div>
             <p className="text-gray-300 mb-4 lg:mb-6 leading-relaxed text-sm sm:text-base">
               المنصة الأولى في المملكة للعروض والخصومات من أفضل المتاجر والمطاعم والخدمات.
               انضم إلينا واكتشف أفضل العروض في مدينتك.
@@ -106,7 +113,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 mt-6 lg:mt-8 pt-6 lg:pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 لقطها. جميع الحقوق محفوظة.
+            © 2024 براق - جميع الحقوق محفوظة
           </p>
           <div className="flex items-center space-x-reverse space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">

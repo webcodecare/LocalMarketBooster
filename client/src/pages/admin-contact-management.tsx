@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { BackButton } from "@/components/ui/back-button";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -123,6 +124,7 @@ export default function AdminContactManagement() {
 
   return (
     <div className="container mx-auto p-6">
+      <BackButton />
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold">إدارة رسائل التواصل</h1>

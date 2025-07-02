@@ -56,7 +56,7 @@ export default function AdminDashboardEnhanced() {
   
   // System settings
   const [systemSettings, setSystemSettings] = useState({
-    platformName: "لقطها",
+    platformName: "براق",
     contactEmail: "support@laqatha.com",
     contactPhone: "+966501234567",
     basicPlanPrice: 49,

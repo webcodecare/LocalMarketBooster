@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, varchar, numeric, date } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, varchar, numeric, decimal, date, json } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -72,6 +72,7 @@ export const offers = pgTable("offers", {
   endDate: timestamp("end_date"),
   isActive: boolean("is_active").default(true),
   isFeatured: boolean("is_featured").default(false),
+  isPriority: boolean("is_priority").default(false),
   isApproved: boolean("is_approved").default(true),
   views: integer("views").default(0),
   createdAt: timestamp("created_at").defaultNow(),
@@ -178,6 +179,21 @@ export const aiAnalysis = pgTable("ai_analysis", {
   marketingTips: text("marketing_tips"),
   status: text("status").notNull().default("completed"), // completed, failed, pending
   analyzedAt: timestamp("analyzed_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const testimonials = pgTable("testimonials", {
+  id: serial("id").primaryKey(),
+  clientName: text("client_name").notNull(),
+  jobTitle: text("job_title").notNull(),
+  reviewText: text("review_text").notNull(),
+  rating: integer("rating").notNull().default(5), // 1-5 stars
+  clientAvatar: text("client_avatar"),
+  displayOrder: integer("display_order").notNull().default(0),
+  isActive: boolean("is_active").default(true),
+  status: text("status", { enum: ["pending", "approved", "rejected"] }).default("pending"),
+  approvedAt: timestamp("approved_at"),
+  approvedBy: integer("approved_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -322,6 +338,11 @@ export const insertAiAnalysisSchema = createInsertSchema(aiAnalysis).omit({
   analyzedAt: true,
 });
 
+export const insertTestimonialSchema = createInsertSchema(testimonials).omit({
+  id: true,
+  createdAt: true,
+});
+
 export type OfferAnalytics = typeof offerAnalytics.$inferSelect;
 export type InsertOfferAnalytics = z.infer<typeof insertOfferAnalyticsSchema>;
 export type Notification = typeof notifications.$inferSelect;
@@ -332,8 +353,10 @@ export type SupportTicket = typeof supportTickets.$inferSelect;
 export type InsertSupportTicket = z.infer<typeof insertSupportTicketSchema>;
 export type AiAnalysis = typeof aiAnalysis.$inferSelect;
 export type InsertAiAnalysis = z.infer<typeof insertAiAnalysisSchema>;
+export type Testimonial = typeof testimonials.$inferSelect;
+export type InsertTestimonial = z.infer<typeof insertTestimonialSchema>;
 
-// Subscription Plans and Features Management
+// Enterprise Subscription Plans and Features Management
 export const subscriptionPlans = pgTable("subscription_plans", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -344,6 +367,10 @@ export const subscriptionPlans = pgTable("subscription_plans", {
   currency: text("currency").notNull().default("SAR"),
   billingPeriod: text("billing_period").notNull().default("monthly"), // monthly, yearly
   offerLimit: integer("offer_limit").notNull().default(3),
+  screenLimit: integer("screen_limit").notNull().default(5),
+  adDuration: integer("ad_duration").notNull().default(30), // seconds
+  selectedFeatures: text("selected_features").default("{}"), // JSON string for feature toggles
+  featureLimits: text("feature_limits").default("{}"), // JSON string for custom limits
   isActive: boolean("is_active").notNull().default(true),
   sortOrder: integer("sort_order").notNull().default(0),
   color: text("color").default("#3B82F6"), // Plan color for UI
@@ -423,6 +450,201 @@ export type SubscriptionPlanWithFeatures = SubscriptionPlan & {
   planFeatures: (PlanFeature & { feature: Feature })[];
 };
 
+// Gamified Business Badges System
+export const badges = pgTable("badges", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  nameAr: text("name_ar").notNull(),
+  description: text("description").notNull(),
+  descriptionAr: text("description_ar").notNull(),
+  icon: text("icon").notNull(), // lucide icon name
+  color: text("color").notNull(), // tailwind color class
+  backgroundColor: text("background_color").notNull(),
+  criteria: json("criteria").notNull(), // JSON object defining requirements
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const userBadges = pgTable("user_badges", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  badgeId: integer("badge_id").references(() => badges.id).notNull(),
+  awardedAt: timestamp("awarded_at").defaultNow(),
+  automaticallyAwarded: boolean("automatically_awarded").default(true),
+  awardedBy: integer("awarded_by").references(() => users.id), // admin who manually awarded
+  progress: json("progress"), // JSON object tracking progress toward badge
+});
+
+// Badge Relations
+export const badgesRelations = relations(badges, ({ many }) => ({
+  userBadges: many(userBadges),
+}));
+
+export const userBadgesRelations = relations(userBadges, ({ one }) => ({
+  user: one(users, {
+    fields: [userBadges.userId],
+    references: [users.id],
+  }),
+  badge: one(badges, {
+    fields: [userBadges.badgeId],
+    references: [badges.id],
+  }),
+  awardedByUser: one(users, {
+    fields: [userBadges.awardedBy],
+    references: [users.id],
+  }),
+}));
+
+// Badge Schema Types
+export const insertBadgeSchema = createInsertSchema(badges).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertUserBadgeSchema = createInsertSchema(userBadges).omit({
+  id: true,
+  awardedAt: true,
+});
+
+export type Badge = typeof badges.$inferSelect;
+export type InsertBadge = z.infer<typeof insertBadgeSchema>;
+export type UserBadge = typeof userBadges.$inferSelect;
+export type InsertUserBadge = z.infer<typeof insertUserBadgeSchema>;
+
+export type BadgeWithUsers = Badge & {
+  userBadges: (UserBadge & { user: User })[];
+};
+
+export type UserWithBadges = User & {
+  userBadges: (UserBadge & { badge: Badge })[];
+};
+
+// Leads Schema
+export const leads = pgTable("leads", {
+  id: serial("id").primaryKey(),
+  fullName: varchar("full_name", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 20 }).notNull(),
+  city: varchar("city", { length: 100 }).notNull(),
+  offerId: integer("offer_id").notNull().references(() => offers.id, { onDelete: "cascade" }),
+  merchantId: integer("merchant_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  isRead: boolean("is_read").notNull().default(false),
+  notes: text("notes"),
+});
+
+// New Subscription Plans Schema (replacing old one)
+export const newSubscriptionPlans = pgTable("subscription_plans_v2", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 100 }).notNull(),
+  nameAr: varchar("name_ar", { length: 100 }).notNull(),
+  description: text("description"),
+  descriptionAr: text("description_ar"),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 3 }).notNull().default("SAR"),
+  duration: integer("duration").notNull(), // in days
+  features: json("features").notNull(),
+  featuresAr: json("features_ar").notNull(),
+  maxOffers: integer("max_offers").notNull().default(10),
+  priorityOffers: boolean("priority_offers").notNull().default(false),
+  analytics: boolean("analytics").notNull().default(false),
+  badges: boolean("badges").notNull().default(false),
+  isActive: boolean("is_active").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// User Subscriptions Schema
+export const userSubscriptions = pgTable("user_subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  planId: integer("plan_id").notNull().references(() => newSubscriptionPlans.id),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  autoRenew: boolean("auto_renew").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Relations
+export const leadsRelations = relations(leads, ({ one }) => ({
+  offer: one(offers, {
+    fields: [leads.offerId],
+    references: [offers.id],
+  }),
+  merchant: one(users, {
+    fields: [leads.merchantId],
+    references: [users.id],
+  }),
+  user: one(users, {
+    fields: [leads.userId],
+    references: [users.id],
+  }),
+}));
+
+export const newSubscriptionPlansRelations = relations(newSubscriptionPlans, ({ many }) => ({
+  userSubscriptions: many(userSubscriptions),
+}));
+
+export const userSubscriptionsRelations = relations(userSubscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [userSubscriptions.userId],
+    references: [users.id],
+  }),
+  plan: one(newSubscriptionPlans, {
+    fields: [userSubscriptions.planId],
+    references: [newSubscriptionPlans.id],
+  }),
+}));
+
+// Update existing user relations to include subscriptions and leads
+export const updatedUsersRelations = relations(users, ({ many }) => ({
+  offers: many(offers),
+  branches: many(branches),
+  userBadges: many(userBadges),
+  subscriptions: many(userSubscriptions),
+  leads: many(leads),
+}));
+
+// Schema Types
+export const insertLeadSchema = createInsertSchema(leads).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertLeadsSubscriptionPlanSchema = createInsertSchema(newSubscriptionPlans).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertLeadsUserSubscriptionSchema = createInsertSchema(userSubscriptions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type Lead = typeof leads.$inferSelect;
+export type InsertLead = z.infer<typeof insertLeadSchema>;
+export type LeadsSubscriptionPlan = typeof newSubscriptionPlans.$inferSelect;
+export type InsertSubscriptionPlan = z.infer<typeof insertSubscriptionPlanSchema>;
+export type UserSubscription = typeof userSubscriptions.$inferSelect;
+export type InsertUserSubscription = z.infer<typeof insertUserSubscriptionSchema>;
+
+export type LeadWithRelations = Lead & {
+  offer: OfferWithRelations;
+  merchant: User;
+  user?: User;
+};
+
+export type LeadsSubscriptionPlanWithStats = LeadsSubscriptionPlan & {
+  subscriberCount: number;
+};
+
 // Screen Ads Tables
 export const screenLocations = pgTable("screen_locations", {
   id: serial("id").primaryKey(),
@@ -495,6 +717,8 @@ export type ScreenLocation = typeof screenLocations.$inferSelect;
 export type InsertScreenLocation = z.infer<typeof insertScreenLocationSchema>;
 export type ScreenAd = typeof screenAds.$inferSelect;
 export type InsertScreenAd = z.infer<typeof insertScreenAdSchema>;
+
+
 
 export type ScreenAdWithRelations = ScreenAd & {
   merchant: User;
@@ -873,29 +1097,6 @@ export type MerchantNotificationWithRelations = MerchantNotification & {
   booking?: ScreenBookingWithRelations;
 };
 
-// Static Pages Management
-export const staticPages = pgTable("static_pages", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  titleAr: text("title_ar").notNull(),
-  slug: text("slug").notNull().unique(),
-  content: text("content").notNull(),
-  contentAr: text("content_ar").notNull(),
-  metaTitle: text("meta_title"),
-  metaTitleAr: text("meta_title_ar"),
-  metaDescription: text("meta_description"),
-  metaDescriptionAr: text("meta_description_ar"),
-  isPublished: boolean("is_published").notNull().default(true),
-  sortOrder: integer("sort_order").notNull().default(0),
-  showInFooter: boolean("show_in_footer").notNull().default(false),
-  showInHeader: boolean("show_in_header").notNull().default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-  publishedAt: timestamp("published_at"),
-  createdBy: integer("created_by").references(() => users.id),
-  updatedBy: integer("updated_by").references(() => users.id)
-});
-
 // Admin Roles and Permissions
 export const adminRoles = pgTable("admin_roles", {
   id: serial("id").primaryKey(),
@@ -935,12 +1136,107 @@ export const platformSettings = pgTable("platform_settings", {
   updatedBy: integer("updated_by").references(() => users.id)
 });
 
-// Insert schemas
-export const insertStaticPageSchema = createInsertSchema(staticPages).omit({
+// CMS Homepage Content Sections
+export const cmsHomepageSections = pgTable("cms_homepage_sections", {
+  id: serial("id").primaryKey(),
+  sectionKey: text("section_key").notNull().unique(), // hero, benefits, how_it_works, testimonials, etc.
+  title: text("title"),
+  titleAr: text("title_ar"),
+  subtitle: text("subtitle"),
+  subtitleAr: text("subtitle_ar"),
+  content: text("content"),
+  contentAr: text("content_ar"),
+  buttonText: text("button_text"),
+  buttonTextAr: text("button_text_ar"),
+  buttonUrl: text("button_url"),
+  backgroundImage: text("background_image"),
+  backgroundColor: text("background_color"),
+  textColor: text("text_color"),
+  isVisible: boolean("is_visible").notNull().default(true),
+  sortOrder: integer("sort_order").default(0),
+  metadata: json("metadata"), // For additional flexible data
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedBy: integer("updated_by").references(() => users.id)
+});
+
+// CMS Site Branding & Logo Management
+export const cmsSiteBranding = pgTable("cms_site_branding", {
+  id: serial("id").primaryKey(),
+  siteName: text("site_name").notNull().default("Braaq"),
+  siteNameAr: text("site_name_ar").notNull().default("براق"),
+  siteLogo: text("site_logo"), // Main logo URL
+  siteLogoWhite: text("site_logo_white"), // White version for dark backgrounds
+  siteFavicon: text("site_favicon"),
+  siteTagline: text("site_tagline"),
+  siteTaglineAr: text("site_tagline_ar"),
+  primaryColor: text("primary_color").default("#16a34a"), // Saudi green
+  secondaryColor: text("secondary_color").default("#15803d"),
+  accentColor: text("accent_color").default("#dcfce7"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedBy: integer("updated_by").references(() => users.id)
+});
+
+// CMS Benefits/Features Content
+export const cmsBenefits = pgTable("cms_benefits", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  titleAr: text("title_ar").notNull(),
+  description: text("description"),
+  descriptionAr: text("description_ar"),
+  icon: text("icon"), // Lucide icon name or image URL
+  isVisible: boolean("is_visible").notNull().default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedBy: integer("updated_by").references(() => users.id)
+});
+
+// CMS How It Works Steps
+export const cmsHowItWorksSteps = pgTable("cms_how_it_works_steps", {
+  id: serial("id").primaryKey(),
+  stepNumber: integer("step_number").notNull(),
+  title: text("title").notNull(),
+  titleAr: text("title_ar").notNull(),
+  description: text("description"),
+  descriptionAr: text("description_ar"),
+  icon: text("icon"), // Lucide icon name or image URL
+  isVisible: boolean("is_visible").notNull().default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  updatedBy: integer("updated_by").references(() => users.id)
+});
+
+// Insert schemas for CMS tables
+export const insertCmsHomepageSectionSchema = createInsertSchema(cmsHomepageSections).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
-  publishedAt: true
+  updatedBy: true,
+});
+
+export const insertCmsSiteBrandingSchema = createInsertSchema(cmsSiteBranding).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  updatedBy: true,
+});
+
+export const insertCmsBenefitSchema = createInsertSchema(cmsBenefits).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  updatedBy: true,
+});
+
+export const insertCmsHowItWorksStepSchema = createInsertSchema(cmsHowItWorksSteps).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  updatedBy: true,
 });
 
 export const insertAdminRoleSchema = createInsertSchema(adminRoles).omit({
@@ -951,20 +1247,12 @@ export const insertAdminRoleSchema = createInsertSchema(adminRoles).omit({
 
 export const insertPlatformSettingSchema = createInsertSchema(platformSettings).omit({
   id: true,
-  updatedAt: true
+  updatedAt: true,
+  updatedBy: true,
 });
 
 // Relations
-export const staticPagesRelations = relations(staticPages, ({ one }) => ({
-  createdByUser: one(users, {
-    fields: [staticPages.createdBy],
-    references: [users.id],
-  }),
-  updatedByUser: one(users, {
-    fields: [staticPages.updatedBy],
-    references: [users.id],
-  }),
-}));
+// Removed duplicate staticPages relations
 
 export const adminRolesRelations = relations(adminRoles, ({ many }) => ({
   assignments: many(adminRoleAssignments),
@@ -992,19 +1280,25 @@ export const platformSettingsRelations = relations(platformSettings, ({ one }) =
   }),
 }));
 
-// Export types
-export type StaticPage = typeof staticPages.$inferSelect;
-export type InsertStaticPage = z.infer<typeof insertStaticPageSchema>;
+// Export types for CMS tables
+export type CmsHomepageSection = typeof cmsHomepageSections.$inferSelect;
+export type InsertCmsHomepageSection = z.infer<typeof insertCmsHomepageSectionSchema>;
+export type CmsSiteBranding = typeof cmsSiteBranding.$inferSelect;
+export type InsertCmsSiteBranding = z.infer<typeof insertCmsSiteBrandingSchema>;
+export type CmsBenefit = typeof cmsBenefits.$inferSelect;
+export type InsertCmsBenefit = z.infer<typeof insertCmsBenefitSchema>;
+export type CmsHowItWorksStep = typeof cmsHowItWorksSteps.$inferSelect;
+export type InsertCmsHowItWorksStep = z.infer<typeof insertCmsHowItWorksStepSchema>;
+
+export type StaticPage = typeof cmsStaticPages.$inferSelect;
+export type InsertStaticPage = z.infer<typeof insertCmsStaticPageSchema>;
 export type AdminRole = typeof adminRoles.$inferSelect;
 export type InsertAdminRole = z.infer<typeof insertAdminRoleSchema>;
 export type AdminRoleAssignment = typeof adminRoleAssignments.$inferSelect;
 export type PlatformSetting = typeof platformSettings.$inferSelect;
 export type InsertPlatformSetting = z.infer<typeof insertPlatformSettingSchema>;
 
-export type StaticPageWithRelations = StaticPage & {
-  createdByUser?: User;
-  updatedByUser?: User;
-};
+// Removed StaticPageWithRelations type to fix schema errors
 
 export type AdminRoleWithAssignments = AdminRole & {
   assignments: (AdminRoleAssignment & {
@@ -1112,4 +1406,243 @@ export type LocationWithReviews = ScreenLocation & {
   reviews: ScreenReviewWithRelations[];
   averageRating: number;
   totalReviews: number;
+};
+
+// CMS Static Pages
+export const cmsStaticPages = pgTable("cms_static_pages", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  titleAr: text("title_ar").notNull(),
+  slug: text("slug").notNull().unique(),
+  content: text("content").notNull(),
+  contentAr: text("content_ar").notNull(),
+  metaDescription: text("meta_description"),
+  metaDescriptionAr: text("meta_description_ar"),
+  isVisible: boolean("is_visible").default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Site Settings for social media and WhatsApp
+export const cmsSiteSettings = pgTable("cms_site_settings", {
+  id: serial("id").primaryKey(),
+  whatsappNumber: text("whatsapp_number"),
+  whatsappEnabled: boolean("whatsapp_enabled").default(false),
+  whatsappPosition: text("whatsapp_position").default("bottom-right"),
+  instagramUrl: text("instagram_url"),
+  twitterUrl: text("twitter_url"),
+  linkedinUrl: text("linkedin_url"),
+  snapchatUrl: text("snapchat_url"),
+  tiktokUrl: text("tiktok_url"),
+  socialMediaEnabled: boolean("social_media_enabled").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// CMS Schemas
+export const insertCmsStaticPageSchema = createInsertSchema(cmsStaticPages).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertCmsSiteSettingsSchema = createInsertSchema(cmsSiteSettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// CMS Types
+export type CmsStaticPage = typeof cmsStaticPages.$inferSelect;
+export type InsertCmsStaticPage = z.infer<typeof insertCmsStaticPageSchema>;
+export type CmsSiteSettings = typeof cmsSiteSettings.$inferSelect;
+export type InsertCmsSiteSettings = z.infer<typeof insertCmsSiteSettingsSchema>;
+
+// Tracking Settings for Marketing Integration
+export const trackingSettings = pgTable("tracking_settings", {
+  id: serial("id").primaryKey(),
+  googleAnalyticsId: text("google_analytics_id").default(""),
+  googleTagManagerId: text("google_tag_manager_id").default(""),
+  googleAdsConversionId: text("google_ads_conversion_id").default(""),
+  googleAdsConversionLabel: text("google_ads_conversion_label").default(""),
+  metaPixelId: text("meta_pixel_id").default(""),
+  tiktokPixelId: text("tiktok_pixel_id").default(""),
+  snapPixelId: text("snap_pixel_id").default(""),
+  trackingEnabled: boolean("tracking_enabled").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Discount Codes Management System
+export const discountCodes = pgTable("discount_codes", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  description: text("description"),
+  discountType: text("discount_type").notNull(), // 'fixed' or 'percentage'
+  discountValue: numeric("discount_value", { precision: 10, scale: 2 }).notNull(),
+  minimumOrderValue: numeric("minimum_order_value", { precision: 10, scale: 2 }).default("0"),
+  maxUses: integer("max_uses"), // null means unlimited
+  usedCount: integer("used_count").notNull().default(0),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdBy: integer("created_by").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Discount Code Usage Tracking
+export const discountCodeUsage = pgTable("discount_code_usage", {
+  id: serial("id").primaryKey(),
+  codeId: integer("code_id").references(() => discountCodes.id, { onDelete: "cascade" }).notNull(),
+  userId: integer("user_id").references(() => users.id),
+  customerEmail: text("customer_email"),
+  customerPhone: text("customer_phone"),
+  orderValue: numeric("order_value", { precision: 10, scale: 2 }).notNull(),
+  discountAmount: numeric("discount_amount", { precision: 10, scale: 2 }).notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  usedAt: timestamp("used_at").defaultNow(),
+});
+
+// Affiliate/Marketer Tracking System
+export const marketers = pgTable("marketers", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  phone: text("phone"),
+  referralCode: text("referral_code").notNull().unique(),
+  isActive: boolean("is_active").notNull().default(true),
+  commissionRate: numeric("commission_rate", { precision: 5, scale: 2 }).default("0"), // percentage
+  totalReferrals: integer("total_referrals").notNull().default(0),
+  totalEarnings: numeric("total_earnings", { precision: 12, scale: 2 }).notNull().default("0"),
+  paymentDetails: json("payment_details"), // bank info, etc.
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Customer Referral Tracking
+export const customerReferrals = pgTable("customer_referrals", {
+  id: serial("id").primaryKey(),
+  marketerId: integer("marketer_id").references(() => marketers.id, { onDelete: "cascade" }).notNull(),
+  customerId: integer("customer_id").references(() => users.id),
+  customerEmail: text("customer_email"),
+  customerPhone: text("customer_phone"),
+  referralSource: text("referral_source").default("link"), // 'link', 'code', 'manual'
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  conversionValue: numeric("conversion_value", { precision: 10, scale: 2 }).default("0"),
+  status: text("status").notNull().default("pending"), // 'pending', 'converted', 'cancelled'
+  referredAt: timestamp("referred_at").defaultNow(),
+  convertedAt: timestamp("converted_at"),
+});
+
+// Payment Gateway Settings
+export const paymentSettings = pgTable("payment_settings", {
+  id: serial("id").primaryKey(),
+  moyasarEnabled: boolean("moyasar_enabled").notNull().default(false),
+  moyasarPublishableKey: text("moyasar_publishable_key").default(""),
+  moyasarSecretKey: text("moyasar_secret_key").default(""),
+  moyasarWebhookSecret: text("moyasar_webhook_secret").default(""),
+  testMode: boolean("test_mode").notNull().default(true),
+  supportedCurrencies: text("supported_currencies").array().default(["SAR"]),
+  minimumAmount: numeric("minimum_amount", { precision: 10, scale: 2 }).default("1.00"),
+  maximumAmount: numeric("maximum_amount", { precision: 10, scale: 2 }).default("50000.00"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Relations for new tables
+export const discountCodesRelations = relations(discountCodes, ({ one, many }) => ({
+  createdBy: one(users, { fields: [discountCodes.createdBy], references: [users.id] }),
+  usage: many(discountCodeUsage),
+}));
+
+export const discountCodeUsageRelations = relations(discountCodeUsage, ({ one }) => ({
+  code: one(discountCodes, { fields: [discountCodeUsage.codeId], references: [discountCodes.id] }),
+  user: one(users, { fields: [discountCodeUsage.userId], references: [users.id] }),
+}));
+
+export const marketersRelations = relations(marketers, ({ many }) => ({
+  referrals: many(customerReferrals),
+}));
+
+export const customerReferralsRelations = relations(customerReferrals, ({ one }) => ({
+  marketer: one(marketers, { fields: [customerReferrals.marketerId], references: [marketers.id] }),
+  customer: one(users, { fields: [customerReferrals.customerId], references: [users.id] }),
+}));
+
+// Schemas for new tables
+export const insertTrackingSettingsSchema = createInsertSchema(trackingSettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDiscountCodeSchema = createInsertSchema(discountCodes).omit({
+  id: true,
+  usedCount: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDiscountCodeUsageSchema = createInsertSchema(discountCodeUsage).omit({
+  id: true,
+  usedAt: true,
+});
+
+export const insertMarketerSchema = createInsertSchema(marketers).omit({
+  id: true,
+  totalReferrals: true,
+  totalEarnings: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertCustomerReferralSchema = createInsertSchema(customerReferrals).omit({
+  id: true,
+  referredAt: true,
+  convertedAt: true,
+});
+
+export const insertPaymentSettingsSchema = createInsertSchema(paymentSettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Types for new tables
+export type TrackingSettings = typeof trackingSettings.$inferSelect;
+export type InsertTrackingSettings = z.infer<typeof insertTrackingSettingsSchema>;
+
+export type DiscountCode = typeof discountCodes.$inferSelect;
+export type InsertDiscountCode = z.infer<typeof insertDiscountCodeSchema>;
+
+export type DiscountCodeUsage = typeof discountCodeUsage.$inferSelect;
+export type InsertDiscountCodeUsage = z.infer<typeof insertDiscountCodeUsageSchema>;
+
+export type Marketer = typeof marketers.$inferSelect;
+export type InsertMarketer = z.infer<typeof insertMarketerSchema>;
+
+export type CustomerReferral = typeof customerReferrals.$inferSelect;
+export type InsertCustomerReferral = z.infer<typeof insertCustomerReferralSchema>;
+
+export type PaymentSettings = typeof paymentSettings.$inferSelect;
+export type InsertPaymentSettings = z.infer<typeof insertPaymentSettingsSchema>;
+
+// Enhanced types with relations
+export type DiscountCodeWithUsage = DiscountCode & {
+  usage: DiscountCodeUsage[];
+  createdBy: User;
+};
+
+export type MarketerWithStats = Marketer & {
+  referrals: CustomerReferral[];
+};
+
+export type CustomerReferralWithDetails = CustomerReferral & {
+  marketer: Marketer;
+  customer?: User;
 };

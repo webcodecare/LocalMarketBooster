@@ -45,8 +45,9 @@ export default function SubscriptionPlans() {
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
 
+  // Use public endpoint for subscription plans
   const { data: plans = [], isLoading: plansLoading } = useQuery<SubscriptionPlan[]>({
-    queryKey: ["/api/subscription/plans"],
+    queryKey: ["/api/subscription-plans"],
   });
 
   const { data: currentSubscription, isLoading: subscriptionLoading } = useQuery<MerchantSubscription>({
@@ -107,17 +108,21 @@ export default function SubscriptionPlans() {
     return currentSubscription.plan?.id === planId;
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">تسجيل الدخول مطلوب</h2>
-          <p className="text-gray-600 mb-4">يجب تسجيل الدخول لعرض خطط الاشتراك</p>
-          <Button onClick={() => setLocation("/auth")}>تسجيل الدخول</Button>
-        </div>
-      </div>
-    );
-  }
+  const handleSelectPlan = (plan: SubscriptionPlan) => {
+    if (!user) {
+      // Redirect to auth for non-logged users
+      setLocation("/auth");
+      return;
+    }
+    
+    // Existing logic for logged-in users
+    if (plan.price === 0) {
+      subscribeMutation.mutate(plan.id);
+    } else {
+      setSelectedPlan(plan);
+      setShowPaymentDialog(true);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -126,19 +131,27 @@ export default function SubscriptionPlans() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Button 
             variant="ghost" 
-            onClick={() => setLocation("/home")}
+            onClick={() => setLocation("/")}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            العودة للوحة التحكم
+            العودة للرئيسية
           </Button>
           <h1 className="text-2xl font-bold">خطط الاشتراك</h1>
         </div>
       </header>
 
+      {/* Hero Section */}
+      <div className="text-center py-12">
+        <h2 className="text-4xl font-bold text-gray-900 mb-4">اختر الخطة المناسبة لعملك</h2>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          خطط مرنة تناسب احتياجات جميع الأعمال - من الشركات الناشئة إلى المؤسسات الكبيرة
+        </p>
+      </div>
+
       <div className="container mx-auto px-4 py-12">
         {/* Current Subscription Status */}
-        {currentSubscription && (
+        {user && currentSubscription && (
           <div className="mb-8">
             <Card className="border-l-4 border-blue-500">
               <CardHeader>
@@ -257,20 +270,18 @@ export default function SubscriptionPlans() {
                 <Button 
                   className="w-full"
                   variant={plan.name === "Premium" ? "default" : "outline"}
-                  onClick={() => {
-                    if (plan.price === 0) {
-                      subscribeMutation.mutate(plan.id);
-                    } else {
-                      setSelectedPlan(plan);
-                      setShowPaymentDialog(true);
-                    }
-                  }}
-                  disabled={subscribeMutation.isPending || isCurrentPlan(plan.id)}
+                  onClick={() => handleSelectPlan(plan)}
+                  disabled={subscribeMutation.isPending || (user && isCurrentPlan(plan.id))}
                 >
                   {subscribeMutation.isPending ? (
                     "جاري الاشتراك..."
-                  ) : isCurrentPlan(plan.id) ? (
+                  ) : (user && isCurrentPlan(plan.id)) ? (
                     "الخطة المفعلة"
+                  ) : !user ? (
+                    <>
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      {plan.price === 0 ? "اشترك مجاناً" : "اشترك الآن"}
+                    </>
                   ) : (
                     <>
                       <CreditCard className="mr-2 h-4 w-4" />

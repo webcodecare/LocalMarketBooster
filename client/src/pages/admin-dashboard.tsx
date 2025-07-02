@@ -40,7 +40,7 @@ export default function AdminDashboard() {
   const [editingOffer, setEditingOffer] = useState<OfferWithRelations | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [systemSettings, setSystemSettings] = useState({
-    platformName: "لقطها",
+    platformName: "براق",
     contactEmail: "support@laqatha.com",
     contactPhone: "+966501234567",
     basicPlanPrice: 49,

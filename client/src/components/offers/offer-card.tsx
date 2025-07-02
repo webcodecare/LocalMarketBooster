@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import CountdownTimer from "./countdown-timer";
 import SaveOfferDialog from "./save-offer-dialog";
+import { OfferLikeButton } from "./offer-like-button";
 import { useToast } from "@/hooks/use-toast";
 import type { OfferWithRelations } from "@shared/schema";
 import { useLocation } from "wouter";

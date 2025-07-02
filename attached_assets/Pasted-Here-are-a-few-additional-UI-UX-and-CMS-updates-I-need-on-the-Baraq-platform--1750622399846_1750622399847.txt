@@ -1,0 +1,55 @@
+Here are a few additional UI/UX and CMS updates I need on the Baraq platform:
+
+------------------------------------
+🔒 [1] Hide Screen Ads Publicly (continued)
+------------------------------------
+In addition to hiding the "Screen Ads" module from merchants, please also:
+
+- Hide the following links from the homepage and footer for non-admin users:
+   - “تصفح مواقع الشاشات” button
+   - Footer links under “الخدمات” like “الشاشات الإعلانية” and “حجز الشاشات”
+
+- Ensure these pages do not appear in the frontend navigation, and only Admins can access them directly by URL.
+
+------------------------------------
+⚙️ [2] Dynamic Static Page Management (CMS)
+------------------------------------
+- I need a simple interface in the Admin Panel to manage **static content pages**, such as:
+   - من نحن
+   - سياسة الخصوصية
+   - الشروط والأحكام
+   - الدعم الفني
+
+Features required:
+- Create / Edit / Delete pages
+- Page title (English + Arabic)
+- URL slug (auto-generated or editable)
+- Rich Text Editor (e.g., TinyMCE / QuillJS)
+- Visibility toggle (on/off)
+
+These pages should be reflected dynamically in the website’s top and footer menus based on visibility.
+
+------------------------------------
+📱 [3] Social Media Icons in Footer
+------------------------------------
+- Please add icons for the following social platforms in the website footer:
+   - Instagram
+   - X (Twitter)
+   - LinkedIn
+   - Snapchat
+   - TikTok
+- Admin should be able to update the URLs from the Admin Panel → Settings.
+
+------------------------------------
+💬 [4] Floating WhatsApp Button
+------------------------------------
+- Add a floating WhatsApp button on the homepage (and optionally across all pages).
+- It should appear either **bottom-left or bottom-right**, with an option to control placement.
+- Admin should be able to:
+   - Set the WhatsApp number
+   - Choose position (left/right)
+   - Enable/disable the floating button
+
+Example UX: A WhatsApp icon that opens a new tab to `https://wa.me/966xxxxxxxxx` when clicked.
+
+Let me know if you need mockups or sample admin UI for the CMS section.

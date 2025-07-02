@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, registerSchema, type LoginData, type RegisterData } from "@shared/schema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { BackButton } from "@/components/ui/back-button";
 
 import { ArrowRight } from "lucide-react";
 
@@ -19,10 +20,16 @@ export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [, setLocation] = useLocation();
 
-  // Redirect if already logged in
+  // Redirect if already logged in based on user role
   useEffect(() => {
     if (user) {
-      setLocation("/dashboard");
+      if (user.role === "admin") {
+        setLocation("/admin");
+      } else if (user.role === "business") {
+        setLocation("/merchant");
+      } else {
+        setLocation("/dashboard");
+      }
     }
   }, [user, setLocation]);
 
@@ -86,9 +93,16 @@ export default function AuthPage() {
       <header className="bg-white shadow-lg border-b-2 border-saudi-green/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
-            <div className="flex-shrink-0 cursor-pointer" onClick={() => setLocation("/")}>
-              <h1 className="text-3xl font-bold text-saudi-green">لقطها 🇸🇦</h1>
-              <p className="text-sm text-gray-600 font-medium">أفضل العروض والخصومات في المملكة</p>
+            <div className="flex-shrink-0 cursor-pointer flex items-center gap-3" onClick={() => setLocation("/")}>
+              <img 
+                src="/attached_assets/ChatGPT_Image_Jun_25__2025__02_32_00_AM-removebg-preview_1750807971844.png" 
+                alt="Baraq Logo" 
+                className="w-12 h-12 object-contain"
+              />
+              <div>
+                <h1 className="text-3xl font-bold text-saudi-green">براق 🇸🇦</h1>
+                <p className="text-sm text-gray-600 font-medium">أفضل العروض والخصومات في المملكة</p>
+              </div>
             </div>
             <button 
               onClick={() => setLocation("/")}
@@ -105,6 +119,7 @@ export default function AuthPage() {
         {/* Left Side - Form */}
         <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-md w-full space-y-8">
+            <BackButton fallbackPath="/" className="mb-8" />
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-12 h-14 p-2 bg-gray-100 rounded-2xl">
                 <TabsTrigger value="login" className="rounded-xl font-bold text-lg data-[state=active]:bg-white data-[state=active]:text-saudi-green data-[state=active]:shadow-md">
@@ -461,7 +476,7 @@ export default function AuthPage() {
         <div className="hidden lg:block lg:flex-1 bg-gradient-to-br from-saudi-green to-green-700">
           <div className="flex flex-col justify-center items-center h-full p-12 text-white text-center">
             <div className="max-w-md">
-              <h2 className="text-4xl font-bold mb-6">انضم إلى منصة لقطها</h2>
+              <h2 className="text-4xl font-bold mb-6">انضم إلى منصة براق</h2>
               <p className="text-xl mb-8 text-green-100">
                 وصل إلى آلاف العملاء المحتملين واعرض منتجاتك وخدماتك بأفضل الطرق
               </p>

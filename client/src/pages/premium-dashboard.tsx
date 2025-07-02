@@ -5,6 +5,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { BackButton } from "@/components/ui/back-button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -258,13 +259,7 @@ export default function PremiumDashboard() {
     <div className="min-h-screen bg-gray-50">
       {/* Back Navigation */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <button 
-          onClick={() => setLocation("/merchant")}
-          className="flex items-center text-gray-600 hover:text-saudi-green font-medium px-3 py-2 rounded-lg hover:bg-green-50 transition-all duration-200 mb-4"
-        >
-          <i className="fas fa-arrow-right ml-2"></i>
-          العودة للوحة التاجر
-        </button>
+        <BackButton fallbackPath="/merchant" />
       </div>
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

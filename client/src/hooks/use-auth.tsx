@@ -7,6 +7,7 @@ import {
 import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { trackEvent } from "@/components/tracking/tracking-scripts";
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -38,10 +39,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      
+      // Track login event
+      trackEvent.register(String(user.id));
+      
+      toast({
+        title: "تم تسجيل الدخول بنجاح",
+        description: `مرحباً ${user.businessName || user.username}`,
+        variant: "default",
+      });
+      // Redirect based on user role
+      if (user.role === "admin") {
+        window.location.href = "/admin";
+      } else if (user.role === "business") {
+        window.location.href = "/merchant";
+      } else {
+        window.location.href = "/";
+      }
     },
     onError: (error: Error) => {
       toast({
-        title: "Login failed",
+        title: "فشل في تسجيل الدخول",
         description: error.message,
         variant: "destructive",
       });
@@ -55,10 +73,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      toast({
+        title: "تم إنشاء الحساب بنجاح",
+        description: `مرحباً ${user.businessName || user.username}، تم إنشاء حسابك بنجاح`,
+        variant: "default",
+      });
+      // Redirect based on user role after registration
+      if (user.role === "admin") {
+        window.location.href = "/admin";
+      } else if (user.role === "business") {
+        window.location.href = "/merchant";
+      } else {
+        window.location.href = "/";
+      }
     },
     onError: (error: Error) => {
       toast({
-        title: "Registration failed",
+        title: "فشل في إنشاء الحساب",
         description: error.message,
         variant: "destructive",
       });

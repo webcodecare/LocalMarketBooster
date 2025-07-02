@@ -5,6 +5,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { BackButton } from "@/components/ui/back-button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -90,6 +91,7 @@ export default function MerchantDashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const [activeTab, setActiveTab] = useState("overview");
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [showSupportDialog, setShowSupportDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState("");
@@ -127,6 +129,17 @@ export default function MerchantDashboard() {
 
   const { data: offers = [] } = useQuery<OfferWithRelations[]>({
     queryKey: ["/api/business/offers"],
+  });
+
+  // Get current subscription data
+  const { data: currentSubscription } = useQuery({
+    queryKey: ["/api/business/subscription"],
+    queryFn: async () => {
+      const response = await fetch("/api/business/subscription");
+      if (response.status === 404) return null; // No active subscription
+      if (!response.ok) throw new Error("Failed to fetch subscription");
+      return response.json();
+    }
   });
 
   const upgradeMutation = useMutation({
@@ -216,13 +229,7 @@ export default function MerchantDashboard() {
     <div className="min-h-screen bg-gray-50">
       {/* Back Navigation */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <button 
-          onClick={() => setLocation("/")}
-          className="flex items-center text-gray-600 hover:text-saudi-green font-medium px-3 py-2 rounded-lg hover:bg-green-50 transition-all duration-200 mb-4"
-        >
-          <i className="fas fa-arrow-right ml-2"></i>
-          العودة للرئيسية
-        </button>
+        <BackButton fallbackPath="/" />
       </div>
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -258,7 +265,12 @@ export default function MerchantDashboard() {
                     <h3 className="font-semibold text-orange-800">تنبيهات مهمة</h3>
                     <p className="text-orange-700 text-sm">لديك {mockNotifications.filter(n => !n.isRead).length} تنبيهات جديدة</p>
                   </div>
-                  <Button variant="outline" size="sm" className="text-orange-700 border-orange-300">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-orange-700 border-orange-300"
+                    onClick={() => setActiveTab("notifications")}
+                  >
                     عرض جميع التنبيهات
                   </Button>
                 </div>
@@ -267,15 +279,14 @@ export default function MerchantDashboard() {
           </div>
         )}
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
-            <TabsTrigger value="features">الميزات</TabsTrigger>
+            <TabsTrigger value="offers">إدارة العروض</TabsTrigger>
+            <TabsTrigger value="analytics">التحليلات</TabsTrigger>
+            <TabsTrigger value="branches">إدارة الفروع</TabsTrigger>
             <TabsTrigger value="subscription">الاشتراك</TabsTrigger>
-            <TabsTrigger value="analytics">الإحصائيات</TabsTrigger>
-            <TabsTrigger value="offers">العروض</TabsTrigger>
-            <TabsTrigger value="team">الفريق</TabsTrigger>
-            <TabsTrigger value="support">الدعم</TabsTrigger>
+            <TabsTrigger value="notifications">التنبيهات</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -694,6 +705,59 @@ export default function MerchantDashboard() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Notifications Tab */}
+          <TabsContent value="notifications" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>جميع التنبيهات</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {mockNotifications.map((notification) => (
+                    <div key={notification.id} className="flex items-start space-x-reverse space-x-3 p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                      <div className={`w-3 h-3 rounded-full mt-2 ${notification.isRead ? 'bg-gray-400' : 'bg-saudi-green'}`}></div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium text-gray-900">{notification.title}</h4>
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            notification.type === 'offer' ? 'bg-blue-100 text-blue-800' :
+                            notification.type === 'subscription' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {notification.type === 'offer' ? 'عرض' :
+                             notification.type === 'subscription' ? 'اشتراك' : 'عام'}
+                          </span>
+                        </div>
+                        <p className="text-gray-600 mb-2">{notification.message}</p>
+                        <p className="text-gray-400 text-xs">
+                          {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true, locale: ar })}
+                        </p>
+                      </div>
+                      {!notification.isRead && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            // Mark as read logic here
+                          }}
+                        >
+                          تم القراءة
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                {mockNotifications.length === 0 && (
+                  <div className="text-center py-8">
+                    <i className="fas fa-bell-slash text-4xl text-gray-400 mb-4"></i>
+                    <p className="text-gray-600">لا توجد تنبيهات جديدة</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
 

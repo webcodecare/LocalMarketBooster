@@ -16,6 +16,10 @@ import type { OfferWithRelations } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale";
 import BranchManagement from "@/components/business/branch-management";
+import { MerchantBadges } from "@/components/badges/merchant-badges";
+import { MerchantAnalyticsDashboard } from "@/components/analytics/merchant-analytics-dashboard";
+import { trackEvent } from "@/components/tracking/tracking-scripts";
+import { MerchantLeads } from "@/components/business/merchant-leads";
 
 export default function BusinessDashboard() {
   const { user } = useAuth();
@@ -107,11 +111,12 @@ export default function BusinessDashboard() {
         </div>
 
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="dashboard">نظرة عامة</TabsTrigger>
             <TabsTrigger value="offers">إدارة العروض</TabsTrigger>
+            <TabsTrigger value="analytics">التحليلات</TabsTrigger>
+            <TabsTrigger value="badges">الإنجازات</TabsTrigger>
             <TabsTrigger value="branches">إدارة الفروع</TabsTrigger>
-            <TabsTrigger value="screen-ads">الإعلان على الشاشات</TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard" className="space-y-6">
@@ -489,55 +494,15 @@ export default function BusinessDashboard() {
             </Card>
           </TabsContent>
 
+          <TabsContent value="badges">
+            <MerchantBadges />
+          </TabsContent>
+
           <TabsContent value="branches">
             <BranchManagement />
           </TabsContent>
 
-          <TabsContent value="screen-ads">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">📺</span>
-                  الإعلان على الشاشات
-                </CardTitle>
-                <p className="text-gray-600">اعرض إعلاناتك على الشاشات في المقاهي والمطاعم والمولات</p>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <div className="text-6xl mb-4">🗺️</div>
-                  <h3 className="text-xl font-bold mb-2">اختر موقع وابدأ الإعلان</h3>
-                  <p className="text-gray-600 mb-6">
-                    شاهد جميع المواقع المتاحة على الخريطة واختر الأنسب لإعلانك
-                  </p>
-                  <Button 
-                    className="bg-saudi-green hover:bg-green-800"
-                    onClick={() => setLocation("/screen-ads")}
-                  >
-                    <i className="fas fa-map-marker-alt ml-2"></i>
-                    استكشف المواقع على الخريطة
-                  </Button>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <div className="text-2xl mb-2">🎯</div>
-                      <h4 className="font-medium mb-1">استهداف دقيق</h4>
-                      <p className="text-sm text-gray-600">اختر المواقع الأنسب لجمهورك المستهدف</p>
-                    </div>
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <div className="text-2xl mb-2">💰</div>
-                      <h4 className="font-medium mb-1">أسعار تنافسية</h4>
-                      <p className="text-sm text-gray-600">ابدأ من 50 ريال يومياً للشاشة الواحدة</p>
-                    </div>
-                    <div className="bg-purple-50 p-4 rounded-lg">
-                      <div className="text-2xl mb-2">📊</div>
-                      <h4 className="font-medium mb-1">تتبع الأداء</h4>
-                      <p className="text-sm text-gray-600">راقب عدد مرات العرض والتفاعل</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+
         </Tabs>
 
         {/* Offer Form Dialog */}

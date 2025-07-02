@@ -31,115 +31,306 @@ import {
   Settings
 } from "lucide-react";
 
-// Predefined features list for package creation
+// Enterprise-level feature management system
 const PREDEFINED_FEATURES = [
+  // Team & Access Control
   {
-    id: 'scheduled_ads',
-    name: 'Scheduled Publishing',
-    nameAr: 'النشر المجدول',
-    description: 'Ability to schedule ads for future publication',
-    descriptionAr: 'إمكانية جدولة الإعلانات للنشر المستقبلي',
-    category: 'automation',
-    icon: 'Clock'
+    id: 'enable_subaccounts',
+    name: 'Enable Sub-accounts',
+    nameAr: 'تفعيل الحسابات الفرعية',
+    description: 'Allow creation and management of sub-accounts',
+    descriptionAr: 'السماح بإنشاء وإدارة الحسابات الفرعية',
+    category: 'team_access',
+    icon: 'Users',
+    hasLimit: true,
+    limitName: 'subaccount_limit',
+    limitLabel: 'Sub-account Limit',
+    limitLabelAr: 'حد الحسابات الفرعية'
   },
+  {
+    id: 'role_permissions',
+    name: 'Role-based Permissions',
+    nameAr: 'صلاحيات الأدوار',
+    description: 'Assign different roles and permissions to team members',
+    descriptionAr: 'تعيين أدوار وصلاحيات مختلفة لأعضاء الفريق',
+    category: 'team_access',
+    icon: 'Shield'
+  },
+  {
+    id: 'activity_log',
+    name: 'Activity Log',
+    nameAr: 'سجل النشاطات',
+    description: 'Track user actions and changes',
+    descriptionAr: 'تتبع إجراءات المستخدمين والتغييرات',
+    category: 'team_access',
+    icon: 'FileText'
+  },
+
+  // Content Publishing
   {
     id: 'video_ads',
     name: 'Video Ads',
     nameAr: 'إعلانات الفيديو',
     description: 'Ability to publish video advertisements',
     descriptionAr: 'إمكانية نشر إعلانات الفيديو',
-    category: 'content',
+    category: 'content_publishing',
     icon: 'Video'
   },
   {
-    id: 'photo_ads',
-    name: 'Photo/Image Ads',
+    id: 'image_ads',
+    name: 'Image Ads',
     nameAr: 'إعلانات الصور',
-    description: 'Ability to publish photo and image advertisements',
-    descriptionAr: 'إمكانية نشر إعلانات الصور والرسوم',
-    category: 'content',
+    description: 'Ability to publish image advertisements',
+    descriptionAr: 'إمكانية نشر إعلانات الصور',
+    category: 'content_publishing',
     icon: 'Image'
+  },
+  {
+    id: 'scheduled_publishing',
+    name: 'Scheduled Publishing',
+    nameAr: 'النشر المجدول',
+    description: 'Schedule ads for future publication',
+    descriptionAr: 'جدولة الإعلانات للنشر المستقبلي',
+    category: 'content_publishing',
+    icon: 'Clock'
+  },
+  {
+    id: 'pause_resume',
+    name: 'Pause/Resume Campaigns',
+    nameAr: 'إيقاف/استئناف الحملات',
+    description: 'Control campaign status',
+    descriptionAr: 'التحكم في حالة الحملات',
+    category: 'content_publishing',
+    icon: 'PlayCircle'
   },
   {
     id: 'premium_locations',
     name: 'Premium Screen Locations',
     nameAr: 'مواقع الشاشات المميزة',
-    description: 'Access to premium high-traffic screen locations',
-    descriptionAr: 'الوصول إلى مواقع الشاشات المميزة عالية الحركة',
-    category: 'premium',
+    description: 'Access to premium high-traffic locations',
+    descriptionAr: 'الوصول لمواقع الشاشات المميزة عالية الحركة',
+    category: 'content_publishing',
     icon: 'MapPin'
   },
   {
     id: 'pin_to_top',
     name: 'Pin to Top',
     nameAr: 'تثبيت في المقدمة',
-    description: 'Pin ad to top of screen rotation queue',
-    descriptionAr: 'تثبيت الإعلان في مقدمة دورة العرض',
-    category: 'premium',
+    description: 'Pin ads to top of rotation',
+    descriptionAr: 'تثبيت الإعلانات في مقدمة الدورة',
+    category: 'content_publishing',
     icon: 'Pin'
   },
   {
-    id: 'realtime_reports',
-    name: 'Real-time Reports',
-    nameAr: 'التقارير الفورية',
-    description: 'Real-time analytics including views and engagement metrics',
-    descriptionAr: 'تحليلات فورية شاملة المشاهدات ومقاييس التفاعل',
-    category: 'analytics',
-    icon: 'BarChart3'
+    id: 'offer_limit',
+    name: 'Offer Limit',
+    nameAr: 'حد العروض',
+    description: 'Maximum number of offers allowed',
+    descriptionAr: 'الحد الأقصى لعدد العروض المسموحة',
+    category: 'content_publishing',
+    icon: 'Package',
+    hasLimit: true,
+    limitName: 'offer_limit_value',
+    limitLabel: 'Max Offers',
+    limitLabelAr: 'الحد الأقصى للعروض'
   },
   {
-    id: 'priority_review',
-    name: 'Priority Review',
-    nameAr: 'المراجعة المُسرَّعة',
-    description: 'Priority in review and approval process',
-    descriptionAr: 'أولوية في عملية المراجعة والموافقة',
-    category: 'support',
-    icon: 'FastForward'
+    id: 'screen_limit',
+    name: 'Screen Limit',
+    nameAr: 'حد الشاشات',
+    description: 'Maximum number of screens accessible',
+    descriptionAr: 'الحد الأقصى لعدد الشاشات المتاحة',
+    category: 'content_publishing',
+    icon: 'Monitor',
+    hasLimit: true,
+    limitName: 'screen_limit_value',
+    limitLabel: 'Max Screens',
+    limitLabelAr: 'الحد الأقصى للشاشات'
   },
+  {
+    id: 'custom_ad_duration',
+    name: 'Custom Ad Duration',
+    nameAr: 'مدة الإعلان المخصصة',
+    description: 'Set custom duration for advertisements',
+    descriptionAr: 'تحديد مدة مخصصة للإعلانات',
+    category: 'content_publishing',
+    icon: 'Timer',
+    hasLimit: true,
+    limitName: 'ad_duration_value',
+    limitLabel: 'Ad Duration (seconds)',
+    limitLabelAr: 'مدة الإعلان (ثانية)'
+  },
+
+  // Creative & Design
   {
     id: 'design_support',
     name: 'Free Design Support',
     nameAr: 'دعم التصميم المجاني',
-    description: 'Free professional ad design support',
-    descriptionAr: 'دعم تصميم إعلانات احترافي مجاني',
-    category: 'support',
+    description: 'Professional design assistance',
+    descriptionAr: 'مساعدة تصميم احترافية',
+    category: 'creative_design',
     icon: 'Palette'
   },
   {
-    id: 'pause_resume',
-    name: 'Pause/Resume Campaigns',
-    nameAr: 'إيقاف/استئناف الحملات',
-    description: 'Ability to pause and resume advertising campaigns',
-    descriptionAr: 'إمكانية إيقاف واستئناف الحملات الإعلانية',
-    category: 'automation',
-    icon: 'PlayCircle'
+    id: 'ad_templates',
+    name: 'Access to Ad Templates',
+    nameAr: 'الوصول لقوالب الإعلانات',
+    description: 'Pre-designed ad templates library',
+    descriptionAr: 'مكتبة قوالب إعلانات مصممة مسبقاً',
+    category: 'creative_design',
+    icon: 'Layout'
   },
   {
-    id: 'featured_badge',
-    name: 'Featured Badge',
-    nameAr: 'شارة مميز',
-    description: 'Featured badge on merchant profile',
-    descriptionAr: 'شارة مميز على ملف التاجر الشخصي',
-    category: 'premium',
-    icon: 'Award'
+    id: 'request_edits',
+    name: 'Request Edits on Ads',
+    nameAr: 'طلب تعديلات على الإعلانات',
+    description: 'Request professional edits and modifications',
+    descriptionAr: 'طلب تعديلات وتحسينات احترافية',
+    category: 'creative_design',
+    icon: 'Edit'
+  },
+
+  // Analytics & Insights
+  {
+    id: 'realtime_reports',
+    name: 'Real-time Reports',
+    nameAr: 'التقارير الفورية',
+    description: 'Live analytics and performance data',
+    descriptionAr: 'تحليلات وبيانات أداء مباشرة',
+    category: 'analytics_insights',
+    icon: 'BarChart3'
   },
   {
-    id: 'admin_dashboard',
-    name: 'Admin Dashboard Access',
-    nameAr: 'الوصول للوحة الإدارة',
-    description: 'Access to advanced admin dashboard features',
-    descriptionAr: 'الوصول لميزات لوحة الإدارة المتقدمة',
-    category: 'premium',
+    id: 'performance_comparison',
+    name: 'Ad Performance Comparison',
+    nameAr: 'مقارنة أداء الإعلانات',
+    description: 'Compare performance across different ads',
+    descriptionAr: 'مقارنة الأداء بين الإعلانات المختلفة',
+    category: 'analytics_insights',
+    icon: 'TrendingUp'
+  },
+  {
+    id: 'weekly_reports',
+    name: 'Weekly Report Emails',
+    nameAr: 'تقارير أسبوعية بالبريد',
+    description: 'Automated weekly performance reports',
+    descriptionAr: 'تقارير أداء أسبوعية تلقائية',
+    category: 'analytics_insights',
+    icon: 'Mail'
+  },
+
+  // Platform Access & Management
+  {
+    id: 'advanced_dashboard',
+    name: 'Advanced Dashboard Access',
+    nameAr: 'الوصول للوحة المتقدمة',
+    description: 'Access to advanced dashboard features',
+    descriptionAr: 'الوصول لميزات اللوحة المتقدمة',
+    category: 'platform_management',
     icon: 'Settings'
+  },
+  {
+    id: 'page_builder',
+    name: 'Page Builder Access',
+    nameAr: 'الوصول لبناء الصفحات',
+    description: 'Create custom pages like About Us',
+    descriptionAr: 'إنشاء صفحات مخصصة مثل من نحن',
+    category: 'platform_management',
+    icon: 'FileEdit'
+  },
+  {
+    id: 'offer_history',
+    name: 'Offer History',
+    nameAr: 'تاريخ العروض',
+    description: 'Access to complete offer history and analytics',
+    descriptionAr: 'الوصول لتاريخ العروض الكامل والتحليلات',
+    category: 'platform_management',
+    icon: 'History'
+  },
+  {
+    id: 'notification_system',
+    name: 'Notification System',
+    nameAr: 'نظام الإشعارات',
+    description: 'Advanced notification and alert system',
+    descriptionAr: 'نظام إشعارات وتنبيهات متقدم',
+    category: 'platform_management',
+    icon: 'Bell'
   },
   {
     id: 'auto_renewal',
     name: 'Auto-renewal Option',
     nameAr: 'خيار التجديد التلقائي',
-    description: 'Automatic subscription renewal option',
-    descriptionAr: 'خيار تجديد الاشتراك التلقائي',
-    category: 'automation',
+    description: 'Automatic subscription renewal',
+    descriptionAr: 'تجديد الاشتراك التلقائي',
+    category: 'platform_management',
     icon: 'RotateCcw'
+  },
+
+  // Support & Services
+  {
+    id: 'priority_support',
+    name: 'Priority Support',
+    nameAr: 'الدعم المُسرَّع',
+    description: 'Priority customer support and faster response',
+    descriptionAr: 'دعم عملاء مُسرَّع واستجابة أسرع',
+    category: 'support_services',
+    icon: 'Headphones'
+  },
+  {
+    id: 'account_manager',
+    name: 'Dedicated Account Manager',
+    nameAr: 'مدير حساب مخصص',
+    description: 'Personal account manager for assistance',
+    descriptionAr: 'مدير حساب شخصي للمساعدة',
+    category: 'support_services',
+    icon: 'UserCheck'
+  },
+  {
+    id: 'whatsapp_support',
+    name: 'WhatsApp Support',
+    nameAr: 'دعم واتساب',
+    description: 'Direct WhatsApp support channel',
+    descriptionAr: 'قناة دعم مباشرة عبر واتساب',
+    category: 'support_services',
+    icon: 'MessageCircle'
+  },
+  {
+    id: 'training_materials',
+    name: 'Access to Training Materials',
+    nameAr: 'الوصول لمواد التدريب',
+    description: 'Educational resources and training content',
+    descriptionAr: 'موارد تعليمية ومحتوى تدريبي',
+    category: 'support_services',
+    icon: 'BookOpen'
+  },
+
+  // Branding & Visibility
+  {
+    id: 'featured_badge',
+    name: 'Featured Badge',
+    nameAr: 'شارة مميز',
+    description: 'Featured badge on merchant profile',
+    descriptionAr: 'شارة مميز على ملف التاجر',
+    category: 'branding_visibility',
+    icon: 'Award'
+  },
+  {
+    id: 'marketplace_priority',
+    name: 'Marketplace Placement Priority',
+    nameAr: 'أولوية ترتيب السوق',
+    description: 'Higher placement in marketplace listings',
+    descriptionAr: 'ترتيب أعلى في قوائم السوق',
+    category: 'branding_visibility',
+    icon: 'Star'
+  },
+  {
+    id: 'custom_branding',
+    name: 'Custom Branding',
+    nameAr: 'العلامة التجارية المخصصة',
+    description: 'White-label branding options',
+    descriptionAr: 'خيارات العلامة التجارية المخصصة',
+    category: 'branding_visibility',
+    icon: 'Brush'
   }
 ];
 
@@ -155,6 +346,7 @@ const packageSchema = z.object({
   screenLimit: z.number().min(1, "Screen limit must be at least 1"),  
   adDuration: z.number().min(1, "Ad duration must be at least 1"),
   selectedFeatures: z.record(z.boolean()).default({}),
+  featureLimits: z.record(z.number()).default({}),
   isActive: z.boolean().default(true),
   isPopular: z.boolean().default(false),
   sortOrder: z.number().default(0),
@@ -163,13 +355,50 @@ const packageSchema = z.object({
 
 type PackageFormData = z.infer<typeof packageSchema>;
 
-// Feature category groups for better organization
+// Enterprise feature category groups
 const FEATURE_CATEGORIES = {
-  content: { name: 'Content Publishing', nameAr: 'نشر المحتوى', color: 'bg-blue-100 text-blue-800' },
-  automation: { name: 'Automation', nameAr: 'الأتمتة', color: 'bg-green-100 text-green-800' },
-  premium: { name: 'Premium Features', nameAr: 'الميزات المميزة', color: 'bg-purple-100 text-purple-800' },
-  analytics: { name: 'Analytics', nameAr: 'التحليلات', color: 'bg-yellow-100 text-yellow-800' },
-  support: { name: 'Support & Services', nameAr: 'الدعم والخدمات', color: 'bg-cyan-100 text-cyan-800' }
+  team_access: { 
+    name: 'Team & Access Control', 
+    nameAr: 'الفريق والتحكم بالوصول', 
+    color: 'bg-blue-100 text-blue-800',
+    icon: 'Users'
+  },
+  content_publishing: { 
+    name: 'Content Publishing', 
+    nameAr: 'نشر المحتوى', 
+    color: 'bg-green-100 text-green-800',
+    icon: 'FileText'
+  },
+  creative_design: { 
+    name: 'Creative & Design', 
+    nameAr: 'الإبداع والتصميم', 
+    color: 'bg-purple-100 text-purple-800',
+    icon: 'Palette'
+  },
+  analytics_insights: { 
+    name: 'Analytics & Insights', 
+    nameAr: 'التحليلات والرؤى', 
+    color: 'bg-yellow-100 text-yellow-800',
+    icon: 'BarChart3'
+  },
+  platform_management: { 
+    name: 'Platform Access & Management', 
+    nameAr: 'الوصول وإدارة المنصة', 
+    color: 'bg-indigo-100 text-indigo-800',
+    icon: 'Settings'
+  },
+  support_services: { 
+    name: 'Support & Services', 
+    nameAr: 'الدعم والخدمات', 
+    color: 'bg-cyan-100 text-cyan-800',
+    icon: 'Headphones'
+  },
+  branding_visibility: { 
+    name: 'Branding & Visibility', 
+    nameAr: 'العلامة التجارية والظهور', 
+    color: 'bg-pink-100 text-pink-800',
+    icon: 'Star'
+  }
 };
 
 interface SubscriptionPlan {
@@ -626,36 +855,57 @@ export default function AdminPricingManagement() {
                               </span>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 gap-3">
                               {categoryFeatures.map((feature) => (
-                                <FormField
-                                  key={feature.id}
-                                  control={form.control}
-                                  name={`selectedFeatures.${feature.id}`}
-                                  render={({ field }) => (
-                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                      <FormControl>
-                                        <Switch
-                                          checked={field.value || false}
-                                          onCheckedChange={field.onChange}
-                                        />
-                                      </FormControl>
-                                      <div className="space-y-1 leading-none flex-1">
-                                        <FormLabel className="text-sm font-medium cursor-pointer">
-                                          {feature.name}
-                                        </FormLabel>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                                          {feature.description}
-                                        </p>
-                                        <div className="flex items-center gap-2 mt-2">
-                                          <Badge variant="outline" className="text-xs">
-                                            {feature.nameAr}
-                                          </Badge>
+                                <div key={feature.id} className="rounded-md border p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                  <FormField
+                                    control={form.control}
+                                    name={`selectedFeatures.${feature.id}`}
+                                    render={({ field }) => (
+                                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                        <FormControl>
+                                          <Switch
+                                            checked={field.value || false}
+                                            onCheckedChange={field.onChange}
+                                          />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none flex-1">
+                                          <FormLabel className="text-sm font-medium cursor-pointer">
+                                            {feature.name}
+                                          </FormLabel>
+                                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            {feature.description}
+                                          </p>
+                                          <div className="flex items-center gap-2 mt-2">
+                                            <Badge variant="outline" className="text-xs">
+                                              {feature.nameAr}
+                                            </Badge>
+                                          </div>
                                         </div>
-                                      </div>
-                                    </FormItem>
+                                      </FormItem>
+                                    )}
+                                  />
+                                  
+                                  {/* Custom Limit Input for Features that Support It */}
+                                  {feature.hasLimit && form.watch(`selectedFeatures.${feature.id}`) && (
+                                    <div className="mt-3 ml-8">
+                                      <label className="text-xs text-gray-600 block mb-1">
+                                        {feature.limitLabel} / {feature.limitLabelAr}
+                                      </label>
+                                      <Input
+                                        type="number"
+                                        placeholder="Enter limit..."
+                                        className="h-8 text-sm"
+                                        defaultValue={0}
+                                        onChange={(e) => {
+                                          const value = parseInt(e.target.value) || 0;
+                                          // Store the limit value in the form
+                                          form.setValue(`selectedFeatures.${feature.limitName}`, value as any);
+                                        }}
+                                      />
+                                    </div>
                                   )}
-                                />
+                                </div>
                               ))}
                             </div>
                           </div>

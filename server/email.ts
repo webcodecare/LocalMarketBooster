@@ -12,6 +12,14 @@ interface OfferApprovalEmailData {
   reason?: string;
 }
 
+interface LeadNotificationEmailData {
+  businessName: string;
+  offerTitle: string;
+  customerName: string;
+  customerPhone: string;
+  customerCity: string;
+}
+
 export class EmailService {
   private static instance: EmailService;
 

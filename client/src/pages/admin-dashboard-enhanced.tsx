@@ -5,12 +5,14 @@ import { useLocation, Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { BackButton } from "@/components/ui/back-button";
 import { 
   BarChart3, 
   Users, 
   Package, 
   FileText, 
   Settings,
+  Edit3,
   TrendingUp,
   AlertTriangle,
   CheckCircle,
@@ -116,6 +118,17 @@ export default function AdminDashboardEnhanced() {
       ] : []
     },
     {
+      title: "CMS Content Management",
+      description: "Edit homepage sections, benefits, branding, and all static content",
+      icon: Edit3,
+      path: "/admin/cms-content",
+      color: "bg-indigo-500",
+      stats: [
+        { label: "Homepage Sections", value: "4" },
+        { label: "Platform Benefits", value: "4" }
+      ]
+    },
+    {
       title: "Platform Settings",
       description: "Configure system settings, permissions, and global configurations",
       icon: Settings,
@@ -124,6 +137,50 @@ export default function AdminDashboardEnhanced() {
       stats: [
         { label: "Active Users", value: user ? "1" : "0" },
         { label: "System Status", value: "Online" }
+      ]
+    },
+    {
+      title: "Tracking & Analytics",
+      description: "Configure external tracking tools like GTM, Meta Pixel, Google Ads, and TikTok Pixel",
+      icon: BarChart3,
+      path: "/admin/tracking",
+      color: "bg-violet-500",
+      stats: [
+        { label: "Tracking Tools", value: "4" },
+        { label: "Integration Status", value: "Ready" }
+      ]
+    },
+    {
+      title: "Payment Gateway",
+      description: "Configure Moyasar payment settings, test connections, and manage payment options",
+      icon: DollarSign,
+      path: "/admin/payment-settings",
+      color: "bg-emerald-500",
+      stats: [
+        { label: "Payment Methods", value: "1" },
+        { label: "Status", value: "Ready" }
+      ]
+    },
+    {
+      title: "Discount Codes",
+      description: "Create and manage discount codes, track usage, and configure promotions",
+      icon: Award,
+      path: "/admin/discount-codes",
+      color: "bg-amber-500",
+      stats: [
+        { label: "Active Codes", value: "0" },
+        { label: "Total Savings", value: "0 SAR" }
+      ]
+    },
+    {
+      title: "Affiliate Marketers",
+      description: "Manage affiliate marketers, track referrals, and monitor commission earnings",
+      icon: Target,
+      path: "/admin/marketers",
+      color: "bg-pink-500",
+      stats: [
+        { label: "Active Marketers", value: "0" },
+        { label: "Total Referrals", value: "0" }
       ]
     }
   ];
@@ -209,6 +266,7 @@ export default function AdminDashboardEnhanced() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
       <div className="container mx-auto px-4 py-8">
+        <BackButton fallbackPath="/" />
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">

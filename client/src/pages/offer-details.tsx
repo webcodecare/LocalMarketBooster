@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 import type { OfferWithRelations } from "@shared/schema";
 import { formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale";
+import { LikeButtonModal } from "@/components/offers/like-button-modal";
+import { SmartOfferRecommendations } from "@/components/recommendations/smart-offer-recommendations";
 
 export default function OfferDetails() {
   const { id } = useParams();

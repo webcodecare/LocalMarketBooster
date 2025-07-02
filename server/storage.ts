@@ -1,4 +1,4 @@
-import { users, categories, offers, branches, customerFavorites, subscriptionPlans, features, planFeatures, aiAnalysis, screenLocations, screenAds, screenPricingOptions, screenBookings, merchantProfiles, invoices, type User, type InsertUser, type Category, type InsertCategory, type Offer, type InsertOffer, type OfferWithRelations, type Branch, type InsertBranch, type UserWithBranches, type CustomerFavorite, type InsertCustomerFavorite, type SubscriptionPlan, type InsertSubscriptionPlan, type Feature, type InsertFeature, type PlanFeature, type InsertPlanFeature, type SubscriptionPlanWithFeatures, type AiAnalysis, type InsertAiAnalysis, type ScreenLocation, type InsertScreenLocation, type ScreenAd, type InsertScreenAd, type ScreenAdWithRelations, type ScreenPricingOption, type InsertScreenPricingOption, type ScreenBooking, type InsertScreenBooking, type ScreenBookingWithRelations, type MerchantProfile, type InsertMerchantProfile, type MerchantProfileWithRelations, type Invoice, type InsertInvoice, type InvoiceWithRelations } from "@shared/schema";
+import { users, categories, offers, branches, customerFavorites, subscriptionPlans, features, planFeatures, aiAnalysis, screenLocations, screenAds, screenPricingOptions, screenBookings, merchantProfiles, invoices, testimonials, type User, type InsertUser, type Category, type InsertCategory, type Offer, type InsertOffer, type OfferWithRelations, type Branch, type InsertBranch, type UserWithBranches, type CustomerFavorite, type InsertCustomerFavorite, type SubscriptionPlan, type InsertSubscriptionPlan, type Feature, type InsertFeature, type PlanFeature, type InsertPlanFeature, type SubscriptionPlanWithFeatures, type AiAnalysis, type InsertAiAnalysis, type ScreenLocation, type InsertScreenLocation, type ScreenAd, type InsertScreenAd, type ScreenAdWithRelations, type ScreenPricingOption, type InsertScreenPricingOption, type ScreenBooking, type InsertScreenBooking, type ScreenBookingWithRelations, type MerchantProfile, type InsertMerchantProfile, type MerchantProfileWithRelations, type Invoice, type InsertInvoice, type InvoiceWithRelations, type Testimonial, type InsertTestimonial } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, or, like, sql, gt } from "drizzle-orm";
 import session from "express-session";
@@ -160,6 +160,14 @@ export interface IStorage {
   updateInvoice(id: number, updates: Partial<InsertInvoice>): Promise<Invoice | undefined>;
   deleteInvoice(id: number): Promise<boolean>;
   generateInvoiceForBooking(bookingId: number): Promise<Invoice | undefined>;
+
+  // Testimonial methods
+  getTestimonials(): Promise<Testimonial[]>;
+  getTestimonial(id: number): Promise<Testimonial | undefined>;
+  createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial>;
+  updateTestimonial(id: number, updates: Partial<InsertTestimonial>): Promise<Testimonial | undefined>;
+  deleteTestimonial(id: number): Promise<boolean>;
+  updateTestimonialOrder(id: number, newOrder: number): Promise<Testimonial | undefined>;
 
   sessionStore: any;
 }
@@ -1319,6 +1327,150 @@ export class DatabaseStorage implements IStorage {
       return invoice;
     } catch (error) {
       console.error("Error generating invoice for booking:", error);
+      return undefined;
+    }
+  }
+
+  // Testimonial methods
+  async getTestimonials(): Promise<Testimonial[]> {
+    try {
+      return await db.select()
+        .from(testimonials)
+        .where(and(
+          eq(testimonials.isActive, true),
+          eq(testimonials.status, 'approved')
+        ))
+        .orderBy(testimonials.displayOrder, testimonials.createdAt);
+    } catch (error) {
+      console.error("Error fetching testimonials:", error);
+      return [];
+    }
+  }
+
+  async getAllTestimonials(status?: string): Promise<Testimonial[]> {
+    try {
+      const conditions = [];
+      if (status) {
+        conditions.push(eq(testimonials.status, status as "pending" | "approved" | "rejected"));
+      }
+      
+      return await db.select()
+        .from(testimonials)
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(testimonials.displayOrder, testimonials.createdAt);
+    } catch (error) {
+      console.error("Error fetching all testimonials:", error);
+      return [];
+    }
+  }
+
+  async getTestimonial(id: number): Promise<Testimonial | undefined> {
+    try {
+      const [testimonial] = await db.select()
+        .from(testimonials)
+        .where(eq(testimonials.id, id));
+      return testimonial;
+    } catch (error) {
+      console.error("Error fetching testimonial:", error);
+      return undefined;
+    }
+  }
+
+  async createTestimonial(testimonial: InsertTestimonial): Promise<Testimonial> {
+    const [newTestimonial] = await db.insert(testimonials)
+      .values(testimonial)
+      .returning();
+    return newTestimonial;
+  }
+
+  async updateTestimonial(id: number, updates: Partial<InsertTestimonial>): Promise<Testimonial | undefined> {
+    try {
+      const [updated] = await db.update(testimonials)
+        .set(updates)
+        .where(eq(testimonials.id, id))
+        .returning();
+      return updated;
+    } catch (error) {
+      console.error("Error updating testimonial:", error);
+      return undefined;
+    }
+  }
+
+  async deleteTestimonial(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(testimonials)
+        .where(eq(testimonials.id, id));
+      return (result.rowCount ?? 0) > 0;
+    } catch (error) {
+      console.error("Error deleting testimonial:", error);
+      return false;
+    }
+  }
+
+  async updateTestimonialOrder(id: number, newOrder: number): Promise<Testimonial | undefined> {
+    try {
+      const [updated] = await db.update(testimonials)
+        .set({ displayOrder: newOrder })
+        .where(eq(testimonials.id, id))
+        .returning();
+      return updated;
+    } catch (error) {
+      console.error("Error updating testimonial order:", error);
+      return undefined;
+    }
+  }
+
+
+
+  async toggleTestimonialVisibility(id: number): Promise<Testimonial | undefined> {
+    try {
+      const [current] = await db.select()
+        .from(testimonials)
+        .where(eq(testimonials.id, id))
+        .limit(1);
+      
+      if (!current) return undefined;
+      
+      const [updated] = await db.update(testimonials)
+        .set({ isActive: !current.isActive })
+        .where(eq(testimonials.id, id))
+        .returning();
+      return updated;
+    } catch (error) {
+      console.error("Error toggling testimonial visibility:", error);
+      return undefined;
+    }
+  }
+
+  async approveTestimonial(id: number, adminId: number): Promise<Testimonial | undefined> {
+    try {
+      const [updated] = await db.update(testimonials)
+        .set({ 
+          status: "approved",
+          approvedAt: new Date(),
+          approvedBy: adminId 
+        })
+        .where(eq(testimonials.id, id))
+        .returning();
+      return updated;
+    } catch (error) {
+      console.error("Error approving testimonial:", error);
+      return undefined;
+    }
+  }
+
+  async rejectTestimonial(id: number, adminId: number): Promise<Testimonial | undefined> {
+    try {
+      const [updated] = await db.update(testimonials)
+        .set({ 
+          status: "rejected",
+          approvedBy: adminId 
+        })
+        .where(eq(testimonials.id, id))
+        .returning();
+      return updated;
+    } catch (error) {
+      console.error("Error rejecting testimonial:", error);
       return undefined;
     }
   }

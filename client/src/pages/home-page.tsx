@@ -3,11 +3,15 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import CategoryGrid from "@/components/offers/category-grid";
 import OfferCard from "@/components/offers/offer-card";
+import { PersonalizedOfferCarousel } from "@/components/personalized-offer-carousel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { OfferWithRelations, Category } from "@shared/schema";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function HomePage() {
+  const { user } = useAuth();
+  
   const { data: featuredOffers = [], isLoading: featuredLoading } = useQuery<OfferWithRelations[]>({
     queryKey: ["/api/offers?featured=true&limit=6"],
   });
@@ -31,7 +35,7 @@ export default function HomePage() {
             <div className="text-center lg:text-right">
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold mb-4 lg:mb-6">
                 مرحباً بكم في 
-                <span className="text-saudi-gold block lg:inline"> لقطها</span>
+                <span className="text-saudi-gold block lg:inline"> براق</span>
               </h1>
               <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold mb-6 lg:mb-8">
                 اكتشف أفضل العروض
@@ -77,7 +81,7 @@ export default function HomePage() {
       <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 lg:mb-4">
-            مرحباً بكم في لقطها
+            مرحباً بكم في براق
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-gray-600 leading-relaxed">
             اكتشف آلاف العروض والخصومات من أفضل المتاجر والمطاعم في المملكة
@@ -98,6 +102,15 @@ export default function HomePage() {
           <CategoryGrid categories={categories} />
         </div>
       </section>
+
+      {/* Personalized Recommendations Section */}
+      {user && (
+        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white to-gray-50/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <PersonalizedOfferCarousel />
+          </div>
+        </section>
+      )}
 
       {/* Section Divider */}
       <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-4 sm:mx-8"></div>

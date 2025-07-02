@@ -1,0 +1,80 @@
+I need two updates for the Baraq platform:
+
+------------------------------------
+✅ [1] FULL PACKAGE FEATURE MANAGEMENT SYSTEM
+------------------------------------
+
+Please build an enterprise-level, structured feature selection system inside the "Create Package" interface.
+
+📌 Key Requirements:
+- Allow toggling ON/OFF specific features per package.
+- Features are grouped into logical categories (collapsible or color-coded).
+- Support both English & Arabic labels for each feature.
+- Preview summary of active features per package.
+- JSON structure for storing selected features and custom limits.
+
+📚 Full Feature Set by Category:
+
+👥 Team & Access Control
+- Enable Sub-accounts
+- Sub-account Limit (numeric)
+- Role-based permissions
+- Activity log (track user actions)
+
+📢 Content Publishing
+- Video Ads
+- Image Ads
+- Scheduled Publishing
+- Pause/Resume Campaigns
+- Premium Screen Locations
+- Pin to Top
+- Offer Limit (numeric)
+- Screen Limit (numeric)
+- Custom Ad Duration (numeric)
+
+🎨 Creative & Design
+- Free Design Support
+- Access to Ad Templates
+- Request Edits on Ads
+
+📊 Analytics & Insights
+- Real-time Reports
+- Ad Performance Comparison
+- Weekly Report Emails
+
+🛠 Platform Access & Management
+- Advanced Dashboard Access
+- Page Builder Access (e.g., create About Us page)
+- Offer History
+- Notification System
+- Auto-renewal Option
+
+⚙️ Support & Services
+- Priority Support
+- Dedicated Account Manager
+- WhatsApp Support
+- Access to Training Materials
+
+🏷 Branding & Visibility
+- Featured Badge
+- Marketplace Placement Priority
+- Custom Branding (white-label)
+
+🧠 Additional Notes:
+- All feature toggles must be stored in a structured format (e.g., JSON or database columns).
+- Admin can enable/disable features per package with full control.
+- Package comparison table will be added later for merchants.
+
+------------------------------------
+🔒 [2] TEMPORARILY HIDE “SCREEN ADS” MODULE
+------------------------------------
+
+Please temporarily disable or hide the entire “Screen Ads” module and its related UI components from all users **except Admins**.
+
+Requirements:
+- Hide any screen management sections from sidebar/menu.
+- Hide screen-related pages, buttons, routes, or links from merchants.
+- Only Admin accounts should still see and access this module.
+- We will reactivate it later when development is complete.
+
+Let me know when both tasks are completed or if you need clarification on data structure or access rules.

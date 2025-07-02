@@ -1,14 +1,14 @@
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldX } from "lucide-react";
 import { Redirect, Route } from "wouter";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export function AdminProtectedRoute({
-  path,
-  component: Component,
-}: {
+interface AdminProtectedRouteProps {
   path: string;
   component: () => React.JSX.Element;
-}) {
+}
+
+export function AdminProtectedRoute({ path, component: Component }: AdminProtectedRouteProps) {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
@@ -32,21 +32,35 @@ export function AdminProtectedRoute({
   if (user.role !== "admin") {
     return (
       <Route path={path}>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="max-w-md bg-white rounded-lg shadow-lg p-8 text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">غير مصرح</h1>
-            <p className="text-gray-600 mb-6">ليس لديك صلاحيات للوصول إلى لوحة الإدارة</p>
-            <button
-              onClick={() => window.history.back()}
-              className="bg-saudi-green text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
-            >
-              العودة
-            </button>
-          </div>
+        <div className="container mx-auto px-4 py-8">
+          <Card className="max-w-md mx-auto">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
+                <ShieldX className="w-6 h-6 text-red-600 dark:text-red-400" />
+              </div>
+              <CardTitle className="text-red-600 dark:text-red-400">
+                غير مخول للوصول
+              </CardTitle>
+              <CardDescription>
+                هذه الصفحة متاحة للمديرين فقط
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center">
+              <p className="text-sm text-muted-foreground mb-4">
+                تحتاج إلى صلاحيات مدير للوصول إلى هذا القسم من النظام
+              </p>
+              <a 
+                href="/" 
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+              >
+                العودة للرئيسية
+              </a>
+            </CardContent>
+          </Card>
         </div>
       </Route>
     );
   }
 
-  return <Component />;
+  return <Route path={path} component={Component} />;
 }
